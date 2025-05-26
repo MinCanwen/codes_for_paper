@@ -5,7 +5,7 @@ print(f"Current process ID: {pid}")
 # 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # 构建输出文件夹路径
-output_dir = os.path.join(current_dir, f"0_100_{pid}")
+output_dir = os.path.join(current_dir, f"l_0_{pid}")
 print(output_dir)
 # 如果目录不存在，则创建
 if not os.path.exists(output_dir):
@@ -73,7 +73,7 @@ loss_l_list=[]
 term_list = []
 loss_record_list = []
 
-seed = 42  # 自己定一个
+seed = 42  # 随机种子
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
@@ -142,7 +142,7 @@ class Net(nn.Module):
         non_zero_lambda_1 = a[torch.abs(model.lambda_1) != 0]
     
         if self.thresholding:
-            if non_zero_lambda_1.numel() > 0 and np.log(model.loss_f_record) < np.log(self.loss_f) + 0.1:
+            if non_zero_lambda_1.numel() > 0 and np.log(model.loss_f_record) < np.log(self.loss_f) + 0.03:
                 # 判断是否剩余的非零值大于 n
                 if non_zero_lambda_1.numel() > n:
                     # 获取最小的 n 个非零值的索引
@@ -257,10 +257,10 @@ class PINNInference():
         # self.lambda_1 = torch.flatten(self.dnn.branch_conv[0].weight).unsqueeze(1) #self.dnn.layers.hidden_layer_1.bias.unsqueeze(1)
         #lambda_1 = self.lambda_1 ** 2    
         u,w,v,w_x,v_t = self.net_u(x,t)
-        Phi = torch.cat([torch.ones_like(u), u,u**2/6,u**3/6, 
-                         w,u*w,u**2*w/6,w*u**3/6,
-                         w_x, u*w_x, u**2*w_x/6,w_x*u**3/6,
-                         v,u*v,u**2*v/6,v*u**3/6], 1) 
+        Phi = torch.cat([torch.ones_like(u), 6*u,u**2,u**3 ,
+                         w,u*w,u**2*w,w*u**3,
+                         w_x, u*w_x, u**2*w_x,w_x*u**3,
+                         v,u*v,u**2*v,v*u**3], 1) 
 
         u_tt = v_t
         f = u_tt- torch.matmul(Phi, self.lambda_1)
@@ -289,7 +289,7 @@ class PINNInference():
         
         t_list = range(niter)
         f_pred,phi,u_tt = self.net_f(self.f_x, self.f_t)
-        u_tt_norm = torch.sqrt(torch.mean(u_tt**2).detach())
+        u_tt_norm = torch.mean(u_tt**2).detach()
         self.loss_f_record = 1 
         self.loss_record = 1
 
@@ -338,7 +338,7 @@ class PINNInference():
             loss_m_list.append(loss_m.item()) 
             loss_ut_list.append(loss_ut.item())  
             # phi_norm = torch.mean(phi**2, dim=0).detach()
-            #para2 = para.T*(phi_norm)/u_tt_nor
+            #para2 = para.T*(phi_norm)/u_tt_norm
             para_numpy2 = para2.detach().cpu().numpy()
             # 将 para 存入列表
             lambda_list2.append(para_numpy2)
@@ -351,9 +351,9 @@ class PINNInference():
                 )
 
                 start_time = time.time()
-                u_tt_norm = torch.mean(u_tt**2).detach()
+                u_tt_norm = torch.sqrt(torch.mean(u_tt**2).detach())
                 self.phi_norm = torch.sqrt(torch.mean(phi**2, dim=0).detach()).view(16, 1)
-                # print(phi_norm)
+                print(self.phi_norm)
                 print('log_loss_f_min',np.log(self.loss_f_record),'log_loss_min',np.log(self.loss_record))
         
         loss_record_list.append(model.loss_f_record)
@@ -557,11 +557,11 @@ print("load module")
 
 
 # In[load data] 
-data = scipy.io.loadmat('/data/home/liuyulong/Datasets/wave_50_2.mat')
+data = scipy.io.loadmat('./wave_initial3.mat')
 t = 2*5*np.real(data['t'].flatten()[:,None])/10 #100 *  -85
 x = np.real(data['x'].flatten()[:,None])/10 # -25
 a0 = 0
-length = 70
+length = 50 #50
 t = t[a0:a0+length]
 x = x
 t1 = [t[0],t[-1]]
@@ -590,10 +590,10 @@ new_T = T[:, cols]
 measurement = np.hstack((new_X.flatten()[:,None], new_T.flatten()[:,None],new_Exact.flatten()[:,None] )) 
 #measurement = np.hstack((X.flatten()[:,None], T.flatten()[:,None],Exact.flatten()[:,None] )) 
 
-Nm = 3000
+Nm = 5000
 m_sample = measurement[np.random.choice(measurement.shape[0],Nm),:]
 f = np.hstack((X2.flatten()[:, None], T2.flatten()[:, None]))
-Nf = 3000
+Nf = 5000
 f_sample = f[np.random.choice(f.shape[0],Nf),:]
 
 print(f"load experience data Nm = {Nm} Nf = {Nf} length = {length} start_point= {a0}")
@@ -603,15 +603,15 @@ layers = [2,50,100,100,5]
 model = PINNInference(x_max=1,t_max=1,measurement=m_sample,f=f_sample ,Nf=Nf, layers=layers, device=device, a=1, b=1, c=1, d=1)
 model.train_inverse(niter=10001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=0,lambda4=1,plot_num=5000)
 figure_compare(name='pertraining1')
-model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-9,plot_num=5000)
+model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=1e-9,plot_num=5000)
 print_pde(model.lambda_1, rhs_des)
 figure_compare(name='pertraining')
-model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-9,lambda4=1,plot_num=5000)
+model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=1e-5,lambda4=1,plot_num=1000)
 figure_compare(name='pertraining2')
 
 for i in range(5):  # 第一次训练循环
     # 训练模型
-    model.train_inverse(niter=6001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1,plot_num=5000,dx=0.03,dt=0.03)
+    model.train_inverse(niter=6001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-4, lambda4=1,plot_num=5000,dx=0.03,dt=0.03)
     
     # 打印结果
     print_pde(model.lambda_1, rhs_des)
@@ -621,7 +621,7 @@ for i in range(2):  # 第3次训练循环
     model.dnn.prune_and_freeze_weights(n=4)
     
     # 训练模型2
-    model.train_inverse(niter=10001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
+    model.train_inverse(niter=10001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-3, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
     
     # 打印结果2
     print_pde(model.lambda_1, rhs_des)
@@ -632,13 +632,13 @@ for i in range(7):  # 第3次训练循环
     model.dnn.prune_and_freeze_weights(n=1)
     
     # 训练模型2
-    model.train_inverse(niter=10001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
+    model.train_inverse(niter=10001, Ir= 0.0005, lambda1=1, lambda2=1, lambda3=1e-3, lambda4=1.0, plot_num=1000,freezing=True,dx=0.03,dt=0.03)
     
     # 打印结果2
     print_pde(model.lambda_1, rhs_des)
 
 figure_compare(name='end')
-model.train_inverse(niter=30001, Ir= 0.0005, lambda1=1, lambda2=1, lambda3=0, lambda4=10.0, plot_num=1000,freezing=True,dx=0.03,dt=0.03)
+model.train_inverse(niter=30001, Ir= 0.0005, lambda1=1, lambda2=1, lambda3=0, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
 print_pde(model.lambda_1, rhs_des)
 # 转换为 NumPy 数组，便于后续操作
 lambda_1_history_np = np.array(lambda_list)

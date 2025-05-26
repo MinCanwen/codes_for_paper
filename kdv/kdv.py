@@ -560,7 +560,7 @@ print("load module")
 
 
 # In[load data] 
-data = sio.loadmat('./Datasets/kdv.mat')
+data = sio.loadmat('../Datasets/kdv.mat')
 t = data['t'].flatten()[:,None]
 x = data['x'].flatten()[:,None]
 Exact = np.real(data['usol']).T

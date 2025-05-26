@@ -524,7 +524,7 @@ print("load module")
 
 
 # In[load data] 
-data = sio.loadmat('/data/home/liuyulong/Datasets/harmonic_osc.mat')#/data/home/liuyulong
+data = sio.loadmat('../Datasets/harmonic_osc.mat')
 t = data['t'].flatten()[:,None]
 x = data['x'].flatten()[:,None]
 Exact_real = np.real(data['usol'])
@@ -543,9 +543,11 @@ X2, T2 = np.meshgrid(x2,t2)
 Exact_real = Exact_real[a0:a0+length,:]
 Exact_imag = Exact_imag[a0:a0+length,:]
 
+# In[add Gaussian noise]
 Exact_real = Exact_real + noise*np.std(Exact_real)*np.random.randn(Exact_real.shape[0], Exact_real.shape[1])
 Exact_imag = Exact_imag + noise*np.std(Exact_imag)*np.random.randn(Exact_imag.shape[0], Exact_imag.shape[1])
 
+# In[create datasets for neural network]
 measurement = np.hstack((X.flatten()[:,None], T.flatten()[:,None],Exact_real.flatten()[:,None] ,Exact_imag.flatten()[:,None])) 
 
 Nm = 5000
@@ -556,6 +558,7 @@ f_sample = f[np.random.choice(f.shape[0],Nf),:]
 
 print(f"load experience data Nm = {Nm} Nf = {Nf} length = {length},noise= {noise}")
 
+# In[Pretaining]
 lambda_1_history = []
 layers = [2,10,100,100,8]
 model = PINNInference(x_max=1,t_max=1,measurement=m_sample,f=f_sample ,Nf=Nf, layers=layers, device=device, a=1, b=1, c=1, d=1)
@@ -567,9 +570,8 @@ figure_compare(name='pertraining')
 model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-9,lambda4=10,plot_num=1000)
 figure_compare(name='pertraining2')
 
+# In[remove un-important terms]
 for i in range(3):  # 第一次训练循环
-    # 训练模型
-    # 剪枝和冻结权重
     #model.dnn.prune_and_freeze_weights()
     model.train_inverse(niter=30001, Ir= 0.001, lambda1=1, lambda2=10, lambda3=1e-7, lambda4=1,plot_num=1000,freezing=True)
     
@@ -585,9 +587,13 @@ for i in range(7):  # 第3次训练循环
     
     # 打印结果2
     print_pde(model.lambda_1, rhs_des)
- 
+
+# In[adjust final results without l0 penalty]
 model.train_inverse(niter=50001, Ir= 0.0005, lambda1=1, lambda2=1, lambda3=1e-9, lambda4=1.0, plot_num=1000,freezing=True,dt=0.01,dx=0.01)
 print_pde(model.lambda_1, rhs_des)
+
+
+# In[plot results]
 # 转换为 NumPy 数组，便于后续操作
 lambda_1_history_np = np.array(lambda_list)
 

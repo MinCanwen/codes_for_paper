@@ -142,7 +142,7 @@ class Net(nn.Module):
         non_zero_lambda_1 = a[torch.abs(model.lambda_1) != 0]
     
         if self.thresholding:
-            if non_zero_lambda_1.numel() > 0 and np.log(model.loss_f_record) < np.log(self.loss_f) + 0.05:
+            if non_zero_lambda_1.numel() > 0 and np.log(model.loss_f_record) < np.log(self.loss_f) + 0.5:
                 # 判断是否剩余的非零值大于 n
                 if non_zero_lambda_1.numel() > n:
                     # 获取最小的 n 个非零值的索引
@@ -557,11 +557,11 @@ print("load module")
 
 
 # In[load data] 
-data = scipy.io.loadmat('/data/home/liuyulong/Datasets/wave_33_1.mat')
+data = scipy.io.loadmat('./wave_initial3.mat')
 t = 2*5*np.real(data['t'].flatten()[:,None])/10 #100 *  -85
 x = np.real(data['x'].flatten()[:,None])/10 # -25
 a0 = 3000
-length = 100
+length = 100 #50
 t = t[a0:a0+length]
 x = x
 t1 = [t[0],t[-1]]
@@ -603,15 +603,15 @@ layers = [2,50,100,100,5]
 model = PINNInference(x_max=1,t_max=1,measurement=m_sample,f=f_sample ,Nf=Nf, layers=layers, device=device, a=1, b=1, c=1, d=1)
 model.train_inverse(niter=10001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=0,lambda4=1,plot_num=5000)
 figure_compare(name='pertraining1')
-model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-9,plot_num=5000)
+model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=1e-9,plot_num=5000)
 print_pde(model.lambda_1, rhs_des)
 figure_compare(name='pertraining')
-model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-7,lambda4=1,plot_num=1000)
+model.train_inverse(niter=30001,Ir=0.001,lambda1=1,lambda2=0.1,lambda3=1e-7,lambda4=1,plot_num=1000)
 figure_compare(name='pertraining2')
 
 for i in range(5):  # 第一次训练循环
     # 训练模型
-    model.train_inverse(niter=6001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1,plot_num=5000,dx=0.03,dt=0.03)
+    model.train_inverse(niter=6001, Ir= 0.001, lambda1=1, lambda2=0.1, lambda3=1e-5, lambda4=1,plot_num=5000,dx=0.03,dt=0.03)
     
     # 打印结果
     print_pde(model.lambda_1, rhs_des)
@@ -621,7 +621,7 @@ for i in range(2):  # 第3次训练循环
     model.dnn.prune_and_freeze_weights(n=4)
     
     # 训练模型2
-    model.train_inverse(niter=10001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
+    model.train_inverse(niter=10001, Ir= 0.001, lambda1=1, lambda2=0.1, lambda3=1e-5, lambda4=1.0, plot_num=5000,freezing=True,dx=0.03,dt=0.03)
     
     # 打印结果2
     print_pde(model.lambda_1, rhs_des)
@@ -632,7 +632,7 @@ for i in range(7):  # 第3次训练循环
     model.dnn.prune_and_freeze_weights(n=1)
     
     # 训练模型2
-    model.train_inverse(niter=10001, Ir= 0.0005, lambda1=1, lambda2=1, lambda3=1e-5, lambda4=1.0, plot_num=1000,freezing=True,dx=0.03,dt=0.03)
+    model.train_inverse(niter=10001, Ir= 0.0005, lambda1=1, lambda2=0.1, lambda3=1e-5, lambda4=1.0, plot_num=1000,freezing=True,dx=0.03,dt=0.03)
     
     # 打印结果2
     print_pde(model.lambda_1, rhs_des)
