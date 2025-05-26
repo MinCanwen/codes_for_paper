@@ -5,13 +5,13 @@ print(f"Current process ID: {pid}")
 # 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # 构建输出文件夹路径
-output_dir = os.path.join(current_dir, f"3000_33_{pid}")
+output_dir = os.path.join(current_dir, f"stage_2_{pid}")
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)  # 如果目录不存在，则创建
 
 print(output_dir)
 
-mat_file_path = '/data/home/liuyulong/Datasets/wave_33_1.mat'
+mat_file_path = './wave_initial1.mat'
 import numpy as np
 from sklearn.linear_model import OrthogonalMatchingPursuit
 from numpy import linalg as LA
@@ -238,16 +238,11 @@ class PINNInference():
             retain_graph=True,
             create_graph=True
         )[0]#.unsqueeze(-1)
-        # Phi = torch.cat([torch.ones_like(u), u,u**2,x, t,
-        #                  w,x*w,x**2*w,t*w,t**2*w,
-        #                  w_x, x*w_x, x**2*w_x,t*w_x,t**2*w_x,
-        #                  v,x*v,x**2*v,t*v,t**2*v], 1) 
-#['','u', 'u**2', 'x','t', 'u_x', 'x*u_x', 'x**2*u_x','t*u_x', 't**2*u_x', 'u_xx.','x*u_xx', 'x**2*u_xx', 't*u_xx', 't**2*u_xx', 'u_t.', 'x*u_t', 'x**2*u_t', 't*u_t', 't**2*u_t']
 
         u_tt = v_t
         Phi = w_x
-        f = u_tt   -1.099980*w_x
-        #f = u_tt   + 0.016784*u**3-2.029776*w_x+ 0.070050*v
+        f = u_tt   -1.099980*w_x #discovered equation for stage2
+        #f = u_tt   + 0.016784*u**3-2.029776*w_x+ 0.070050*v #discovered equation stage1
         return f,Phi,v
 
 

@@ -11,7 +11,7 @@ if not os.path.exists(output_dir):
 
 print(output_dir)
 
-mat_file_path = '/data/home/liuyulong/Datasets/wave_50_2.mat'
+mat_file_path = './wave_initial2.mat'
 import numpy as np
 from sklearn.linear_model import OrthogonalMatchingPursuit
 from numpy import linalg as LA
@@ -238,18 +238,11 @@ class PINNInference():
             retain_graph=True,
             create_graph=True
         )[0]#.unsqueeze(-1)
-        # Phi = torch.cat([torch.ones_like(u), u,u**2,x, t,
-        #                  w,x*w,x**2*w,t*w,t**2*w,
-        #                  w_x, x*w_x, x**2*w_x,t*w_x,t**2*w_x,
-        #                  v,x*v,x**2*v,t*v,t**2*v], 1) 
-#['','u', 'u**2', 'x','t', 'u_x', 'x*u_x', 'x**2*u_x','t*u_x', 't**2*u_x', 'u_xx.','x*u_xx', 'x**2*u_xx', 't*u_xx', 't**2*u_xx', 'u_t.', 'x*u_t', 'x**2*u_t', 't*u_t', 't**2*u_t']
-
         u_tt = v_t
         Phi = w_x
 
         #f = u_tt -1.128031*w_x
-        f = u_tt + 0.898127*u**3/6- 1.672286*w_x +0.070257*v
-        #f = u_tt + 0.388056*u - 2.223200*w_x - 0.203716 +0.073173*v
+        f = u_tt + 0.898127*u**3/6- 1.672286*w_x +0.070257*v #discovered equation for stage1
         return f,Phi,v
 
 

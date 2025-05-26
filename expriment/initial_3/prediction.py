@@ -5,13 +5,13 @@ print(f"Current process ID: {pid}")
 # 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # 构建输出文件夹路径
-output_dir = os.path.join(current_dir, f"0_75_{pid}")
+output_dir = os.path.join(current_dir, f"stage1_{pid}")
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)  # 如果目录不存在，则创建
 
 print(output_dir)
 
-mat_file_path = '/data/home/liuyulong/Datasets/wave_66_4.mat'
+mat_file_path = './wave_initial3.mat'
 import numpy as np
 from sklearn.linear_model import OrthogonalMatchingPursuit
 from numpy import linalg as LA
@@ -246,9 +246,8 @@ class PINNInference():
 
         u_tt = v_t
         Phi = w_x
-        #f = u_tt   -1.038220*w_x
-        f = u_tt   + 0.117071*u**3-1.835131*w_x+ 0.076053*v
-        #f = u_tt   + 0.120108*u**3-1.845616*w_x+ 0.076034*v #old one
+        #f = u_tt   -1.038220*w_x  #discovered equation for stage1
+        f = u_tt   + 0.117071*u**3-1.835131*w_x+ 0.076053*v #discovered equation for stage2
         return f,Phi,v
 
 
