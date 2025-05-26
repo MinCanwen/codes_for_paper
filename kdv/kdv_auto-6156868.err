@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/home/liuyulong/auto_discovery/kdv/kdv.py", line 598, in <module>
+    model.dnn.prune_and_freeze_weights(n=6)
+  File "/data/home/liuyulong/auto_discovery/kdv/kdv.py", line 156, in prune_and_freeze_weights
+    self.mask = torch.abs(model.lambda_1) <= torch.abs(min_non_zero_value)
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: abs(): argument 'input' (position 1) must be Tensor, not float
+srun: error: p1: task 0: Exited with exit code 1

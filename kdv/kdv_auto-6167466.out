@@ -1,0 +1,384 @@
+Current process ID: 29195
+/data/home/liuyulong/auto_discovery/kdv/030_G_29195
+Using device: cuda:0
+load module
+load data with noise = 0.3 Nm = 5000 Nf = 5000
+tensor([[True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True],
+        [True]])
+Iter 0, Loss: 1.13457e-01, Loss_m: 2.71741e-02, Loss_f: 1.36214e-02,Loss_ut: 8.49207e-02,Loss_l: 0.000e+00,lam:7.71352e-02,u_tt_norm:1.362e-02, time: 0.34
+log_loss_f_min -4.296112159842293 log_loss_min -2.1763319441023348
+Iter 1000, Loss: 1.31326e-03, Loss_m: 1.16820e-03, Loss_f: 1.92964e-05,Loss_ut: 1.43130e-04,Loss_l: 6.171e+00,lam:6.16952e+00,u_tt_norm:1.362e-02, time: 14.94
+log_loss_f_min -11.959220371913098 log_loss_min -6.644221900588547
+Iter 2000, Loss: 1.17769e-03, Loss_m: 1.12738e-03, Loss_f: 2.91760e-05,Loss_ut: 4.73974e-05,Loss_l: 4.090e+00,lam:4.09039e+00,u_tt_norm:1.863e-03, time: 14.81
+log_loss_f_min -11.959220371913098 log_loss_min -6.744771220370976
+Iter 3000, Loss: 1.15808e-03, Loss_m: 1.11572e-03, Loss_f: 2.98257e-05,Loss_ut: 3.93819e-05,Loss_l: 5.391e+00,lam:5.39251e+00,u_tt_norm:1.876e-03, time: 14.77
+log_loss_f_min -11.959220371913098 log_loss_min -6.765676904976255
+Iter 4000, Loss: 1.25885e-03, Loss_m: 1.14645e-03, Loss_f: 2.90809e-05,Loss_ut: 1.09491e-04,Loss_l: 7.280e+00,lam:7.27917e+00,u_tt_norm:1.895e-03, time: 14.85
+log_loss_f_min -11.959220371913098 log_loss_min -6.777788433178943
+Iter 5000, Loss: 1.18635e-03, Loss_m: 1.11395e-03, Loss_f: 2.73978e-05,Loss_ut: 6.96541e-05,Loss_l: 9.274e+00,lam:9.27558e+00,u_tt_norm:1.934e-03, time: 15.19
+log_loss_f_min -11.959220371913098 log_loss_min -6.785447823916526
+u_tt = (0.000049 )
+    + (0.014900 )u
+    + (-0.111616 )u**2
+    + (0.186651 )u**3
+    + (-0.552786 )u_x
+    + (-2.969433 )u*u_x(-6)
+    + (-1.091287 )u**2*u_x
+    + (0.694358 )u**3*u_x
+    + (-0.024898 )u_xx.
+    + (0.213105 )u*u_xx
+    + (-0.263274 )u**2*u_xx
+    + (-0.225340 )u**3*u_xx
+    + (-0.457439 )u_xxx(-1)
+    + (-0.831377 )u*u_xxx
+    + (-0.579758 )u**2*u_xxx
+    + (-1.059308 )u**3*u_xxx
+   
+Iter 0, Loss: 1.39654e-03, Loss_m: 1.11503e-03, Loss_f: 2.97190e-05,Loss_ut: 2.51691e-04,Loss_l: 9.276e+00,lam:9.27549e+00,u_tt_norm:1.846e-03, time: 0.02
+log_loss_f_min -10.423724783754231 log_loss_min -6.57376071889736
+Iter 1000, Loss: 1.15960e-03, Loss_m: 1.12217e-03, Loss_f: 4.85746e-06,Loss_ut: 3.24857e-05,Loss_l: 8.384e+00,lam:8.38398e+00,u_tt_norm:1.846e-03, time: 15.38
+log_loss_f_min -12.254969133259676 log_loss_min -6.760161373628386
+Iter 2000, Loss: 1.15359e-03, Loss_m: 1.11931e-03, Loss_f: 4.79169e-06,Loss_ut: 2.93944e-05,Loss_l: 8.760e+00,lam:8.76105e+00,u_tt_norm:2.184e-03, time: 14.79
+log_loss_f_min -12.430128042351937 log_loss_min -6.766003580984141
+Iter 3000, Loss: 1.14774e-03, Loss_m: 1.11707e-03, Loss_f: 3.59607e-06,Loss_ut: 2.69917e-05,Loss_l: 9.066e+00,lam:9.06611e+00,u_tt_norm:2.179e-03, time: 15.01
+log_loss_f_min -12.590624831131915 log_loss_min -6.769956585425611
+Iter 4000, Loss: 1.14579e-03, Loss_m: 1.11529e-03, Loss_f: 3.36263e-06,Loss_ut: 2.70474e-05,Loss_l: 9.352e+00,lam:9.35323e+00,u_tt_norm:2.199e-03, time: 15.51
+log_loss_f_min -12.668714366750146 log_loss_min -6.772505512561101
+Iter 5000, Loss: 1.15488e-03, Loss_m: 1.11879e-03, Loss_f: 5.17265e-06,Loss_ut: 3.08202e-05,Loss_l: 9.636e+00,lam:9.63532e+00,u_tt_norm:2.200e-03, time: 15.32
+log_loss_f_min -12.765618259567674 log_loss_min -6.774853509228083
+u_tt = (-0.000201 )
+    + (0.019753 )u
+    + (-0.156755 )u**2
+    + (0.144471 )u**3
+    + (-0.304509 )u_x
+    + (-4.111498 )u*u_x(-6)
+    + (-2.214359 )u**2*u_x
+    + (-0.030538 )u**3*u_x
+    + (0.001352 )u_xx.
+    + (0.032443 )u*u_xx
+    + (-0.354012 )u**2*u_xx
+    + (-0.221016 )u**3*u_xx
+    + (-0.688115 )u_xxx(-1)
+    + (-0.979771 )u*u_xxx
+    + (0.026696 )u**2*u_xxx
+    + (-0.349833 )u**3*u_xxx
+   
+Iter 0, Loss: 1.16068e-03, Loss_m: 1.11606e-03, Loss_f: 4.31529e-06,Loss_ut: 3.93326e-05,Loss_l: 9.635e+00,lam:9.63490e+00,u_tt_norm:2.188e-03, time: 0.03
+log_loss_f_min -12.353346983487903 log_loss_min -6.75875307840666
+Iter 1000, Loss: 1.15200e-03, Loss_m: 1.12112e-03, Loss_f: 3.70658e-06,Loss_ut: 2.62229e-05,Loss_l: 9.541e+00,lam:9.54071e+00,u_tt_norm:2.188e-03, time: 15.42
+log_loss_f_min -12.82575613888217 log_loss_min -6.77131849546039
+Iter 2000, Loss: 1.14688e-03, Loss_m: 1.11864e-03, Loss_f: 3.74808e-06,Loss_ut: 2.35407e-05,Loss_l: 9.488e+00,lam:9.48757e+00,u_tt_norm:2.286e-03, time: 15.56
+log_loss_f_min -12.912778517273464 log_loss_min -6.773020392364522
+Iter 3000, Loss: 1.14317e-03, Loss_m: 1.11733e-03, Loss_f: 2.67338e-06,Loss_ut: 2.22092e-05,Loss_l: 9.558e+00,lam:9.55881e+00,u_tt_norm:2.286e-03, time: 15.57
+log_loss_f_min -12.967124286417672 log_loss_min -6.774397385499367
+Iter 4000, Loss: 1.14147e-03, Loss_m: 1.11648e-03, Loss_f: 2.23796e-06,Loss_ut: 2.17905e-05,Loss_l: 9.627e+00,lam:9.62685e+00,u_tt_norm:2.287e-03, time: 15.87
+log_loss_f_min -13.013235419198367 log_loss_min -6.775442926137901
+Iter 5000, Loss: 1.14077e-03, Loss_m: 1.11583e-03, Loss_f: 2.19279e-06,Loss_ut: 2.17843e-05,Loss_l: 9.662e+00,lam:9.66195e+00,u_tt_norm:2.294e-03, time: 15.20
+log_loss_f_min -13.053838909368725 log_loss_min -6.776189244281275
+Iter 6000, Loss: 1.14023e-03, Loss_m: 1.11534e-03, Loss_f: 2.21618e-06,Loss_ut: 2.17115e-05,Loss_l: 9.677e+00,lam:9.67674e+00,u_tt_norm:2.294e-03, time: 15.47
+log_loss_f_min -13.08530995209909 log_loss_min -6.776911708655316
+Iter 7000, Loss: 1.14099e-03, Loss_m: 1.11600e-03, Loss_f: 2.11100e-06,Loss_ut: 2.19155e-05,Loss_l: 9.679e+00,lam:9.67911e+00,u_tt_norm:2.295e-03, time: 15.24
+log_loss_f_min -13.110877422459776 log_loss_min -6.77751685251907
+Iter 8000, Loss: 1.14699e-03, Loss_m: 1.11993e-03, Loss_f: 2.26576e-06,Loss_ut: 2.38257e-05,Loss_l: 9.671e+00,lam:9.67187e+00,u_tt_norm:2.291e-03, time: 15.31
+log_loss_f_min -13.140515232446798 log_loss_min -6.778086265218496
+Iter 9000, Loss: 1.13849e-03, Loss_m: 1.11375e-03, Loss_f: 1.94521e-06,Loss_ut: 2.18349e-05,Loss_l: 9.658e+00,lam:9.65767e+00,u_tt_norm:2.287e-03, time: 15.41
+log_loss_f_min -13.16118864567762 log_loss_min -6.778611393605222
+Iter 10000, Loss: 1.13746e-03, Loss_m: 1.11330e-03, Loss_f: 1.89328e-06,Loss_ut: 2.13031e-05,Loss_l: 9.636e+00,lam:9.63656e+00,u_tt_norm:2.296e-03, time: 15.29
+log_loss_f_min -13.18674356299569 log_loss_min -6.7791290181805515
+Train 1
+tensor([-7.3186e-06,  1.0822e-05, -4.0187e-05, -1.3347e-04,  1.8303e-03,
+        -1.5998e-02], device='cuda:0', grad_fn=<IndexBackward0>)
+prev_mask tensor([[False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False]], device='cuda:0')
+mask tensor([[ True],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [ True],
+        [ True],
+        [False],
+        [False],
+        [ True],
+        [False],
+        [False],
+        [ True],
+        [ True]], device='cuda:0')
+Pruning the smallest 6 weights for lambda_1.
+Iter 0, Loss: 1.44240e-03, Loss_m: 1.11308e-03, Loss_f: 1.94568e-06,Loss_ut: 2.13670e-05,Loss_l: 9.619e+00,lam:9.61254e+00,u_tt_norm:2.299e-03, time: 0.03
+log_loss_f_min -13.149899277181342 log_loss_min -6.5414501673639736
+Iter 1000, Loss: 1.30450e-03, Loss_m: 1.15035e-03, Loss_f: 8.59972e-07,Loss_ut: 5.61729e-06,Loss_l: 8.938e+00,lam:8.93676e+00,u_tt_norm:2.299e-03, time: 15.37
+log_loss_f_min -14.020132450154769 log_loss_min -6.646762339066575
+Iter 2000, Loss: 1.27792e-03, Loss_m: 1.15422e-03, Loss_f: 6.93046e-07,Loss_ut: 3.78101e-06,Loss_l: 7.895e+00,lam:7.89426e+00,u_tt_norm:2.285e-03, time: 15.43
+log_loss_f_min -14.18226232638427 log_loss_min -6.662525277277325
+Iter 3000, Loss: 1.26881e-03, Loss_m: 1.15689e-03, Loss_f: 7.54840e-07,Loss_ut: 3.61320e-06,Loss_l: 6.824e+00,lam:6.82253e+00,u_tt_norm:2.297e-03, time: 15.57
+log_loss_f_min -14.247870848064759 log_loss_min -6.671973253190943
+Iter 4000, Loss: 1.29380e-03, Loss_m: 1.15697e-03, Loss_f: 7.61333e-07,Loss_ut: 6.89132e-06,Loss_l: 6.030e+00,lam:6.02935e+00,u_tt_norm:2.295e-03, time: 15.40
+log_loss_f_min -14.274167311474324 log_loss_min -6.6805810176472145
+Iter 5000, Loss: 1.26625e-03, Loss_m: 1.15848e-03, Loss_f: 9.32953e-07,Loss_ut: 4.19607e-06,Loss_l: 5.647e+00,lam:5.64701e+00,u_tt_norm:2.294e-03, time: 15.26
+log_loss_f_min -14.297168735197982 log_loss_min -6.683978371884283
+Iter 6000, Loss: 1.26794e-03, Loss_m: 1.15885e-03, Loss_f: 1.31841e-06,Loss_ut: 3.95143e-06,Loss_l: 5.639e+00,lam:5.63930e+00,u_tt_norm:2.307e-03, time: 15.28
+log_loss_f_min -14.315394372639966 log_loss_min -6.685573803224269
+Iter 7000, Loss: 1.25208e-03, Loss_m: 1.15820e-03, Loss_f: 6.68978e-07,Loss_ut: 3.03536e-06,Loss_l: 5.683e+00,lam:5.68292e+00,u_tt_norm:2.305e-03, time: 15.22
+log_loss_f_min -14.37339892027721 log_loss_min -6.686709611096478
+Iter 8000, Loss: 1.25056e-03, Loss_m: 1.15884e-03, Loss_f: 7.83970e-07,Loss_ut: 2.67264e-06,Loss_l: 5.716e+00,lam:5.71569e+00,u_tt_norm:2.309e-03, time: 15.50
+log_loss_f_min -14.422559563047116 log_loss_min -6.687683961665314
+Iter 9000, Loss: 1.24714e-03, Loss_m: 1.15934e-03, Loss_f: 5.59916e-07,Loss_ut: 2.47964e-06,Loss_l: 5.740e+00,lam:5.74056e+00,u_tt_norm:2.308e-03, time: 15.30
+log_loss_f_min -14.466342185207838 log_loss_min -6.688391111859527
+Iter 10000, Loss: 1.27706e-03, Loss_m: 1.15894e-03, Loss_f: 1.85112e-06,Loss_ut: 4.19739e-06,Loss_l: 5.763e+00,lam:5.76302e+00,u_tt_norm:2.315e-03, time: 15.41
+log_loss_f_min -14.495714043785886 log_loss_min -6.689135715830006
+u_tt = (-0.000783 )u
+    + (0.000002 )u**2
+    + (0.000048 )u**3
+    + (-0.206193 )u_x
+    + (-4.705847 )u*u_x(-6)
+    + (-0.000151 )u**2*u_x
+    + (-0.006570 )u*u_xx
+    + (-0.000102 )u**2*u_xx
+    + (-0.843238 )u_xxx(-1)
+    + (0.000087 )u*u_xxx
+   
+tensor([ 1.9152e-06,  4.8163e-05,  8.6759e-05, -1.0182e-04, -1.5111e-04,
+        -7.8262e-04], device='cuda:0', grad_fn=<IndexBackward0>)
+prev_mask tensor([[ True],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [False],
+        [ True],
+        [ True],
+        [False],
+        [False],
+        [ True],
+        [False],
+        [False],
+        [ True],
+        [ True]], device='cuda:0')
+mask tensor([[ True],
+        [ True],
+        [ True],
+        [ True],
+        [False],
+        [False],
+        [ True],
+        [ True],
+        [ True],
+        [False],
+        [ True],
+        [ True],
+        [False],
+        [ True],
+        [ True],
+        [ True]], device='cuda:0')
+Pruning the smallest 6 weights for lambda_1.
+Iter 0, Loss: 1.27750e-03, Loss_m: 1.15961e-03, Loss_f: 1.97073e-06,Loss_ut: 4.05633e-06,Loss_l: 5.762e+00,lam:5.76385e+00,u_tt_norm:2.321e-03, time: 0.02
+log_loss_f_min -13.13710735627698 log_loss_min -6.662849364824982
+Iter 1000, Loss: 1.24382e-03, Loss_m: 1.15899e-03, Loss_f: 5.06572e-07,Loss_ut: 2.21845e-06,Loss_l: 5.758e+00,lam:5.75782e+00,u_tt_norm:2.321e-03, time: 15.66
+log_loss_f_min -14.516283640020307 log_loss_min -6.689588247968352
+Iter 2000, Loss: 1.25515e-03, Loss_m: 1.15859e-03, Loss_f: 1.00362e-06,Loss_ut: 2.86424e-06,Loss_l: 5.788e+00,lam:5.78834e+00,u_tt_norm:2.317e-03, time: 15.43
+log_loss_f_min -14.580392145115711 log_loss_min -6.690227157185585
+Iter 3000, Loss: 1.32046e-03, Loss_m: 1.16032e-03, Loss_f: 2.25123e-06,Loss_ut: 7.95916e-06,Loss_l: 5.803e+00,lam:5.80283e+00,u_tt_norm:2.319e-03, time: 15.31
+log_loss_f_min -14.589192037733305 log_loss_min -6.690690022076414
+Iter 4000, Loss: 1.25613e-03, Loss_m: 1.15868e-03, Loss_f: 6.88057e-07,Loss_ut: 3.24728e-06,Loss_l: 5.810e+00,lam:5.80989e+00,u_tt_norm:2.302e-03, time: 15.26
+log_loss_f_min -14.60250030648778 log_loss_min -6.691082046286656
+Iter 5000, Loss: 1.28083e-03, Loss_m: 1.15882e-03, Loss_f: 2.71272e-06,Loss_ut: 3.66996e-06,Loss_l: 5.818e+00,lam:5.81850e+00,u_tt_norm:2.310e-03, time: 15.19
+log_loss_f_min -14.62286537985912 log_loss_min -6.691519799236255
+Iter 6000, Loss: 1.24396e-03, Loss_m: 1.15956e-03, Loss_f: 5.02452e-07,Loss_ut: 2.11342e-06,Loss_l: 5.824e+00,lam:5.82448e+00,u_tt_norm:2.324e-03, time: 15.39
+log_loss_f_min -14.644839841721073 log_loss_min -6.6917600869524065
+Iter 7000, Loss: 1.24111e-03, Loss_m: 1.15924e-03, Loss_f: 4.40879e-07,Loss_ut: 1.91816e-06,Loss_l: 5.828e+00,lam:5.82818e+00,u_tt_norm:2.322e-03, time: 15.27
+log_loss_f_min -14.680780634858957 log_loss_min -6.692213996218504
+Iter 8000, Loss: 1.24092e-03, Loss_m: 1.15900e-03, Loss_f: 4.67901e-07,Loss_ut: 1.89328e-06,Loss_l: 5.830e+00,lam:5.83044e+00,u_tt_norm:2.318e-03, time: 15.26
+log_loss_f_min -14.680780634858957 log_loss_min -6.692608496034607
+Iter 9000, Loss: 1.27917e-03, Loss_m: 1.16036e-03, Loss_f: 1.63519e-06,Loss_ut: 4.40576e-06,Loss_l: 5.840e+00,lam:5.84006e+00,u_tt_norm:2.316e-03, time: 15.41
+log_loss_f_min -14.711788364859464 log_loss_min -6.692852144315296
+Iter 10000, Loss: 1.23980e-03, Loss_m: 1.15890e-03, Loss_f: 4.36744e-07,Loss_ut: 1.80785e-06,Loss_l: 5.845e+00,lam:5.84543e+00,u_tt_norm:2.309e-03, time: 15.55
+log_loss_f_min -14.711788364859464 log_loss_min -6.693139340549496
+u_tt = (-0.189310 )u_x
+    + (-4.798166 )u*u_x(-6)
+    + (-0.001297 )u*u_xx
+    + (-0.856660 )u_xxx(-1)
+   
+Pruning the smallest weight for lambda_1.
+Iter 0, Loss: 1.23990e-03, Loss_m: 1.15917e-03, Loss_f: 4.31853e-07,Loss_ut: 1.79666e-06,Loss_l: 5.844e+00,lam:5.84513e+00,u_tt_norm:2.320e-03, time: 0.02
+log_loss_f_min -14.655181284621234 log_loss_min -6.692723881211626
+Iter 1000, Loss: 1.23947e-03, Loss_m: 1.15896e-03, Loss_f: 4.22988e-07,Loss_ut: 1.79256e-06,Loss_l: 5.836e+00,lam:5.83555e+00,u_tt_norm:2.320e-03, time: 15.30
+log_loss_f_min -14.70202219536691 log_loss_min -6.69334037063207
+Iter 2000, Loss: 1.23940e-03, Loss_m: 1.15878e-03, Loss_f: 4.10539e-07,Loss_ut: 1.79602e-06,Loss_l: 5.855e+00,lam:5.85549e+00,u_tt_norm:2.321e-03, time: 15.39
+log_loss_f_min -14.723182341352363 log_loss_min -6.693654866492962
+Iter 3000, Loss: 1.25644e-03, Loss_m: 1.15927e-03, Loss_f: 9.85437e-07,Loss_ut: 2.87102e-06,Loss_l: 5.860e+00,lam:5.86042e+00,u_tt_norm:2.321e-03, time: 15.28
+log_loss_f_min -14.746403006476694 log_loss_min -6.693844908642101
+Iter 4000, Loss: 1.23852e-03, Loss_m: 1.15890e-03, Loss_f: 4.09486e-07,Loss_ut: 1.69216e-06,Loss_l: 5.861e+00,lam:5.86089e+00,u_tt_norm:2.326e-03, time: 15.49
+log_loss_f_min -14.746403006476694 log_loss_min -6.694094687595608
+Iter 5000, Loss: 1.23982e-03, Loss_m: 1.15859e-03, Loss_f: 4.23175e-07,Loss_ut: 1.83681e-06,Loss_l: 5.863e+00,lam:5.86300e+00,u_tt_norm:2.323e-03, time: 15.36
+log_loss_f_min -14.773056800656608 log_loss_min -6.69432064228687
+Iter 6000, Loss: 1.23895e-03, Loss_m: 1.15913e-03, Loss_f: 4.64848e-07,Loss_ut: 1.65056e-06,Loss_l: 5.866e+00,lam:5.86574e+00,u_tt_norm:2.317e-03, time: 15.35
+log_loss_f_min -14.773056800656608 log_loss_min -6.6945461777346535
+Iter 7000, Loss: 1.24293e-03, Loss_m: 1.15851e-03, Loss_f: 4.97371e-07,Loss_ut: 2.07851e-06,Loss_l: 5.866e+00,lam:5.86630e+00,u_tt_norm:2.321e-03, time: 15.35
+log_loss_f_min -14.781682902022297 log_loss_min -6.694775151064965
+Iter 8000, Loss: 1.24628e-03, Loss_m: 1.16038e-03, Loss_f: 6.75716e-07,Loss_ut: 2.04430e-06,Loss_l: 5.870e+00,lam:5.86980e+00,u_tt_norm:2.312e-03, time: 15.50
+log_loss_f_min -14.815044347035277 log_loss_min -6.694810056699561
+Iter 9000, Loss: 1.23868e-03, Loss_m: 1.15866e-03, Loss_f: 4.51182e-07,Loss_ut: 1.67898e-06,Loss_l: 5.871e+00,lam:5.87135e+00,u_tt_norm:2.320e-03, time: 15.39
+log_loss_f_min -14.815044347035277 log_loss_min -6.695105062674042
+Iter 10000, Loss: 1.23716e-03, Loss_m: 1.15917e-03, Loss_f: 3.89134e-07,Loss_ut: 1.53431e-06,Loss_l: 5.876e+00,lam:5.87560e+00,u_tt_norm:2.319e-03, time: 15.37
+log_loss_f_min -14.815044347035277 log_loss_min -6.695184216244764
+u_tt = (-0.183016 )u_x
+    + (-4.831656 )u*u_x(-6)
+    + (-0.860929 )u_xxx(-1)
+   
+Pruning the smallest weight for lambda_1.
+Iter 0, Loss: 2.11422e-03, Loss_m: 1.15855e-03, Loss_f: 8.82803e-05,Loss_ut: 1.59431e-06,Loss_l: 5.693e+00,lam:5.69258e+00,u_tt_norm:2.322e-03, time: 0.02
+log_loss_f_min -9.334993664364559 log_loss_min -6.159070513408183
+Iter 1000, Loss: 1.33684e-03, Loss_m: 1.16818e-03, Loss_f: 4.50500e-06,Loss_ut: 6.31897e-06,Loss_l: 6.043e+00,lam:6.04316e+00,u_tt_norm:2.322e-03, time: 15.39
+log_loss_f_min -13.617608268036431 log_loss_min -6.667071448303335
+Iter 2000, Loss: 1.27079e-03, Loss_m: 1.16231e-03, Loss_f: 1.14398e-06,Loss_ut: 3.26607e-06,Loss_l: 6.438e+00,lam:6.43827e+00,u_tt_norm:2.353e-03, time: 15.42
+log_loss_f_min -14.39779373136332 log_loss_min -6.683035518713042
+Iter 3000, Loss: 1.24514e-03, Loss_m: 1.15969e-03, Loss_f: 3.60683e-07,Loss_ut: 1.46673e-06,Loss_l: 6.717e+00,lam:6.71771e+00,u_tt_norm:2.365e-03, time: 15.51
+log_loss_f_min -14.91731010291937 log_loss_min -6.688507226853889
+Iter 4000, Loss: 1.27799e-03, Loss_m: 1.15896e-03, Loss_f: 1.82363e-06,Loss_ut: 3.20576e-06,Loss_l: 6.873e+00,lam:6.87346e+00,u_tt_norm:2.356e-03, time: 15.40
+log_loss_f_min -15.075920535327196 log_loss_min -6.689820769667213
+Iter 5000, Loss: 1.25986e-03, Loss_m: 1.15883e-03, Loss_f: 9.20048e-07,Loss_ut: 2.24185e-06,Loss_l: 6.942e+00,lam:6.94173e+00,u_tt_norm:2.334e-03, time: 15.60
+log_loss_f_min -15.130038039155078 log_loss_min -6.690415986932526
+Iter 6000, Loss: 1.24274e-03, Loss_m: 1.15815e-03, Loss_f: 2.94597e-07,Loss_ut: 1.19589e-06,Loss_l: 6.968e+00,lam:6.96835e+00,u_tt_norm:2.337e-03, time: 15.34
+log_loss_f_min -15.187003050334146 log_loss_min -6.690758893997017
+Iter 7000, Loss: 1.24522e-03, Loss_m: 1.15836e-03, Loss_f: 3.56198e-07,Loss_ut: 1.35114e-06,Loss_l: 6.978e+00,lam:6.97799e+00,u_tt_norm:2.332e-03, time: 15.58
+log_loss_f_min -15.209256937995919 log_loss_min -6.690854666646689
+Iter 8000, Loss: 1.24192e-03, Loss_m: 1.15808e-03, Loss_f: 2.56235e-07,Loss_ut: 1.14521e-06,Loss_l: 6.983e+00,lam:6.98287e+00,u_tt_norm:2.332e-03, time: 15.36
+log_loss_f_min -15.225630136021195 log_loss_min -6.691093857194029
+Iter 9000, Loss: 1.24935e-03, Loss_m: 1.15837e-03, Loss_f: 3.56604e-07,Loss_ut: 1.75653e-06,Loss_l: 6.985e+00,lam:6.98533e+00,u_tt_norm:2.331e-03, time: 15.59
+log_loss_f_min -15.247369444560828 log_loss_min -6.691210848953555
+Iter 10000, Loss: 1.24373e-03, Loss_m: 1.15799e-03, Loss_f: 2.90713e-07,Loss_ut: 1.29731e-06,Loss_l: 6.986e+00,lam:6.98563e+00,u_tt_norm:2.321e-03, time: 15.71
+log_loss_f_min -15.269275118937587 log_loss_min -6.691236536476836
+u_tt = (-5.945849 )u*u_x(-6)
+    + (-1.039782 )u_xxx(-1)
+   
+Pruning the smallest weight for lambda_1.
+Iter 0, Loss: 2.51435e-02, Loss_m: 1.15810e-03, Loss_f: 2.39142e-03,Loss_ut: 1.18058e-06,Loss_l: 5.946e+00,lam:5.94485e+00,u_tt_norm:2.331e-03, time: 0.02
+log_loss_f_min -6.035868501292621 log_loss_min -3.683153922447526
+Iter 1000, Loss: 2.68369e-03, Loss_m: 1.72373e-03, Loss_f: 2.78986e-05,Loss_ut: 6.26497e-05,Loss_l: 5.448e+00,lam:5.44776e+00,u_tt_norm:2.331e-03, time: 16.01
+log_loss_f_min -10.487162115914971 log_loss_min -5.920560725028176
+Iter 2000, Loss: 2.41901e-03, Loss_m: 1.55767e-03, Loss_f: 2.63196e-05,Loss_ut: 5.50739e-05,Loss_l: 4.740e+00,lam:4.73973e+00,u_tt_norm:1.219e-03, time: 15.42
+log_loss_f_min -10.56423691656048 log_loss_min -6.027031369303332
+Iter 3000, Loss: 2.21964e-03, Loss_m: 1.44146e-03, Loss_f: 2.67638e-05,Loss_ut: 4.69948e-05,Loss_l: 4.059e+00,lam:4.05812e+00,u_tt_norm:1.301e-03, time: 15.47
+log_loss_f_min -10.571540691095402 log_loss_min -6.110412273341756
+Iter 4000, Loss: 2.14961e-03, Loss_m: 1.38758e-03, Loss_f: 2.81708e-05,Loss_ut: 4.44045e-05,Loss_l: 3.627e+00,lam:3.62700e+00,u_tt_norm:1.370e-03, time: 15.55
+log_loss_f_min -10.571540691095402 log_loss_min -6.142469027270374
+Iter 5000, Loss: 2.13659e-03, Loss_m: 1.38123e-03, Loss_f: 2.85902e-05,Loss_ut: 4.34563e-05,Loss_l: 3.490e+00,lam:3.49002e+00,u_tt_norm:1.417e-03, time: 15.44
+log_loss_f_min -10.571540691095402 log_loss_min -6.150153388710752
+Iter 6000, Loss: 2.15677e-03, Loss_m: 1.38247e-03, Loss_f: 2.86690e-05,Loss_ut: 4.52997e-05,Loss_l: 3.461e+00,lam:3.46093e+00,u_tt_norm:1.436e-03, time: 15.41
+log_loss_f_min -10.571540691095402 log_loss_min -6.153863672310807
+Iter 7000, Loss: 2.17226e-03, Loss_m: 1.38486e-03, Loss_f: 2.88063e-05,Loss_ut: 4.64822e-05,Loss_l: 3.451e+00,lam:3.45103e+00,u_tt_norm:1.457e-03, time: 15.61
+log_loss_f_min -10.571540691095402 log_loss_min -6.156316200460571
+Iter 8000, Loss: 2.11936e-03, Loss_m: 1.37192e-03, Loss_f: 2.85140e-05,Loss_ut: 4.27833e-05,Loss_l: 3.446e+00,lam:3.44641e+00,u_tt_norm:1.466e-03, time: 15.64
+log_loss_f_min -10.571540691095402 log_loss_min -6.158143790849125
+Iter 9000, Loss: 2.11275e-03, Loss_m: 1.37638e-03, Loss_f: 2.81801e-05,Loss_ut: 4.20129e-05,Loss_l: 3.444e+00,lam:3.44369e+00,u_tt_norm:1.461e-03, time: 15.69
+log_loss_f_min -10.571540691095402 log_loss_min -6.160272712110778
+Iter 10000, Loss: 2.13468e-03, Loss_m: 1.37721e-03, Loss_f: 2.87107e-05,Loss_ut: 4.35942e-05,Loss_l: 3.441e+00,lam:3.44154e+00,u_tt_norm:1.461e-03, time: 15.53
+log_loss_f_min -10.571540691095402 log_loss_min -6.161772029765288
+u_tt = (-3.441541 )u*u_x(-6)
+   
+Restoring previous mask
+Iter 0, Loss: 2.13940e-03, Loss_m: 1.37497e-03, Loss_f: 2.81581e-05,Loss_ut: 4.48439e-05,Loss_l: 3.442e+00,lam:3.44154e+00,u_tt_norm:1.462e-03, time: 0.02
+log_loss_f_min -10.477675060171888 log_loss_min -6.147228234243559
+Iter 1000, Loss: 1.40588e-03, Loss_m: 1.20387e-03, Loss_f: 4.86089e-06,Loss_ut: 1.02294e-05,Loss_l: 5.111e+00,lam:5.11169e+00,u_tt_norm:1.462e-03, time: 15.62
+log_loss_f_min -12.234289584843095 log_loss_min -6.567089456592135
+Iter 2000, Loss: 1.30749e-03, Loss_m: 1.17846e-03, Loss_f: 1.72904e-06,Loss_ut: 5.24537e-06,Loss_l: 5.929e+00,lam:5.92939e+00,u_tt_norm:2.187e-03, time: 15.59
+log_loss_f_min -13.648428832816018 log_loss_min -6.655243257697073
+Iter 3000, Loss: 1.27642e-03, Loss_m: 1.17026e-03, Loss_f: 1.50391e-06,Loss_ut: 2.71235e-06,Loss_l: 6.400e+00,lam:6.40016e+00,u_tt_norm:2.343e-03, time: 15.45
+log_loss_f_min -14.399940146447575 log_loss_min -6.677035990301134
+Iter 4000, Loss: 1.25145e-03, Loss_m: 1.16658e-03, Loss_f: 4.42053e-07,Loss_ut: 1.37611e-06,Loss_l: 6.669e+00,lam:6.66923e+00,u_tt_norm:2.363e-03, time: 15.41
+log_loss_f_min -14.86896663701797 log_loss_min -6.683521579447835
+Iter 5000, Loss: 1.35671e-03, Loss_m: 1.16747e-03, Loss_f: 3.96638e-06,Loss_ut: 8.15274e-06,Loss_l: 6.805e+00,lam:6.80530e+00,u_tt_norm:2.343e-03, time: 15.70
+log_loss_f_min -15.061025945016294 log_loss_min -6.686293828676815
+Iter 6000, Loss: 1.25415e-03, Loss_m: 1.16444e-03, Loss_f: 5.64457e-07,Loss_ut: 1.53823e-06,Loss_l: 6.868e+00,lam:6.86766e+00,u_tt_norm:2.329e-03, time: 15.47
+log_loss_f_min -15.224814890454175 log_loss_min -6.687540760865649
+Iter 7000, Loss: 1.24877e-03, Loss_m: 1.16445e-03, Loss_f: 3.12106e-07,Loss_ut: 1.22638e-06,Loss_l: 6.894e+00,lam:6.89373e+00,u_tt_norm:2.324e-03, time: 15.80
+log_loss_f_min -15.304245640655356 log_loss_min -6.688240612486433
+Iter 8000, Loss: 1.24707e-03, Loss_m: 1.16410e-03, Loss_f: 2.43756e-07,Loss_ut: 1.14375e-06,Loss_l: 6.909e+00,lam:6.90948e+00,u_tt_norm:2.330e-03, time: 15.41
+log_loss_f_min -15.37715019304503 log_loss_min -6.688752215756743
+Iter 9000, Loss: 1.25004e-03, Loss_m: 1.16346e-03, Loss_f: 6.00714e-07,Loss_ut: 1.13421e-06,Loss_l: 6.923e+00,lam:6.92287e+00,u_tt_norm:2.329e-03, time: 15.44
+log_loss_f_min -15.476098499248803 log_loss_min -6.689253975762481
+Iter 10000, Loss: 1.24392e-03, Loss_m: 1.16347e-03, Loss_f: 2.03715e-07,Loss_ut: 9.15208e-07,Loss_l: 6.926e+00,lam:6.92639e+00,u_tt_norm:2.328e-03, time: 15.58
+log_loss_f_min -15.5184319394015 log_loss_min -6.68959143026758
+u_tt = (-5.904609 )u*u_x(-6)
+    + (-1.021780 )u_xxx(-1)
+   
+mask freezing
+Iter 0, Loss: 1.24384e-03, Loss_m: 1.16348e-03, Loss_f: 1.96942e-07,Loss_ut: 9.12670e-07,Loss_l: 6.926e+00,lam:6.92639e+00,u_tt_norm:2.329e-03, time: 0.02
+log_loss_f_min -15.440354995910212 log_loss_min -6.689553711313375
+Iter 1000, Loss: 1.30693e-03, Loss_m: 1.16463e-03, Loss_f: 2.19744e-06,Loss_ut: 5.09877e-06,Loss_l: 6.933e+00,lam:6.93325e+00,u_tt_norm:2.329e-03, time: 15.47
+log_loss_f_min -15.48208031950507 log_loss_min -6.689818710058967
+Iter 2000, Loss: 1.24539e-03, Loss_m: 1.16318e-03, Loss_f: 2.04869e-07,Loss_ut: 1.07629e-06,Loss_l: 6.940e+00,lam:6.93988e+00,u_tt_norm:2.315e-03, time: 15.50
+log_loss_f_min -15.5793667173572 log_loss_min -6.6901822029770575
+Iter 3000, Loss: 1.25135e-03, Loss_m: 1.16317e-03, Loss_f: 7.23230e-07,Loss_ut: 1.15372e-06,Loss_l: 6.940e+00,lam:6.94033e+00,u_tt_norm:2.322e-03, time: 15.79
+log_loss_f_min -15.615691041981227 log_loss_min -6.690341424895471
+Iter 4000, Loss: 1.24297e-03, Loss_m: 1.16301e-03, Loss_f: 2.09326e-07,Loss_ut: 8.47574e-07,Loss_l: 6.939e+00,lam:6.93922e+00,u_tt_norm:2.326e-03, time: 15.55
+log_loss_f_min -15.630040381093034 log_loss_min -6.690560255904098
+Iter 5000, Loss: 1.25713e-03, Loss_m: 1.16307e-03, Loss_f: 9.52788e-07,Loss_ut: 1.50944e-06,Loss_l: 6.944e+00,lam:6.94428e+00,u_tt_norm:2.327e-03, time: 15.82
+log_loss_f_min -15.66718223277463 log_loss_min -6.6908095905094775
+Iter 6000, Loss: 1.25099e-03, Loss_m: 1.16330e-03, Loss_f: 4.76187e-07,Loss_ut: 1.34456e-06,Loss_l: 6.948e+00,lam:6.94781e+00,u_tt_norm:2.327e-03, time: 15.67
+log_loss_f_min -15.685652242577506 log_loss_min -6.690984096121091
+Iter 7000, Loss: 1.24439e-03, Loss_m: 1.16290e-03, Loss_f: 1.50520e-07,Loss_ut: 1.04921e-06,Loss_l: 6.949e+00,lam:6.94879e+00,u_tt_norm:2.323e-03, time: 15.50
+log_loss_f_min -15.717454963841954 log_loss_min -6.6911081054584125
+Iter 8000, Loss: 1.25412e-03, Loss_m: 1.16280e-03, Loss_f: 8.99757e-07,Loss_ut: 1.28165e-06,Loss_l: 6.951e+00,lam:6.95137e+00,u_tt_norm:2.324e-03, time: 15.63
+log_loss_f_min -15.733185238039411 log_loss_min -6.6913122903876685
+Iter 9000, Loss: 1.25822e-03, Loss_m: 1.16260e-03, Loss_f: 9.27130e-07,Loss_ut: 1.68295e-06,Loss_l: 6.952e+00,lam:6.95158e+00,u_tt_norm:2.328e-03, time: 15.44
+log_loss_f_min -15.735487082636421 log_loss_min -6.691363202490185
+Iter 10000, Loss: 1.28900e-03, Loss_m: 1.16415e-03, Loss_f: 1.68297e-06,Loss_ut: 3.84802e-06,Loss_l: 6.955e+00,lam:6.95448e+00,u_tt_norm:2.328e-03, time: 15.60
+log_loss_f_min -15.75120305956352 log_loss_min -6.691668635758368
+u_tt = (-5.924858 )u*u_x(-6)
+    + (-1.029619 )u_xxx(-1)
+   
+Iter 0, Loss: 1.34769e-03, Loss_m: 1.16418e-03, Loss_f: 1.48071e-06,Loss_ut: 3.54394e-06,Loss_l: 6.954e+00,lam:6.95448e+00,u_tt_norm:2.336e-03, time: 0.02
+log_loss_f_min -13.422990536861334 log_loss_min -6.6093596309605
+Iter 1000, Loss: 1.17715e-03, Loss_m: 1.16312e-03, Loss_f: 4.72651e-08,Loss_ut: 9.30447e-07,Loss_l: 6.956e+00,lam:6.95556e+00,u_tt_norm:2.336e-03, time: 15.72
+log_loss_f_min -16.867493350794692 log_loss_min -6.744657483779656
+Iter 2000, Loss: 1.17651e-03, Loss_m: 1.16323e-03, Loss_f: 4.18176e-08,Loss_ut: 9.09739e-07,Loss_l: 6.967e+00,lam:6.96690e+00,u_tt_norm:2.352e-03, time: 15.53
+log_loss_f_min -17.059796573994458 log_loss_min -6.745476973046187
+Iter 3000, Loss: 1.17577e-03, Loss_m: 1.16325e-03, Loss_f: 3.61996e-08,Loss_ut: 8.90345e-07,Loss_l: 6.974e+00,lam:6.97427e+00,u_tt_norm:2.350e-03, time: 15.73
+log_loss_f_min -17.192830950610933 log_loss_min -6.745997330663198
+Iter 4000, Loss: 1.17526e-03, Loss_m: 1.16325e-03, Loss_f: 3.22518e-08,Loss_ut: 8.77606e-07,Loss_l: 6.981e+00,lam:6.98111e+00,u_tt_norm:2.352e-03, time: 15.80
+log_loss_f_min -17.2791292424624 log_loss_min -6.746324871064055
+Iter 5000, Loss: 1.17500e-03, Loss_m: 1.16327e-03, Loss_f: 3.05903e-08,Loss_ut: 8.67284e-07,Loss_l: 6.986e+00,lam:6.98622e+00,u_tt_norm:2.354e-03, time: 15.66
+log_loss_f_min -17.351985175325623 log_loss_min -6.746613179533523
+Iter 6000, Loss: 1.17834e-03, Loss_m: 1.16322e-03, Loss_f: 6.35966e-08,Loss_ut: 8.76250e-07,Loss_l: 6.992e+00,lam:6.99213e+00,u_tt_norm:2.353e-03, time: 15.71
+log_loss_f_min -17.410243390879412 log_loss_min -6.746821784390452
+Iter 7000, Loss: 1.17433e-03, Loss_m: 1.16324e-03, Loss_f: 2.60933e-08,Loss_ut: 8.48032e-07,Loss_l: 6.997e+00,lam:6.99661e+00,u_tt_norm:2.353e-03, time: 15.47
+log_loss_f_min -17.464444247257664 log_loss_min -6.7470570001564045
+Iter 8000, Loss: 1.18498e-03, Loss_m: 1.16323e-03, Loss_f: 1.26793e-07,Loss_ut: 9.06258e-07,Loss_l: 7.002e+00,lam:7.00155e+00,u_tt_norm:2.353e-03, time: 15.68
+log_loss_f_min -17.511710951757305 log_loss_min -6.747247850059187
+Iter 9000, Loss: 1.17394e-03, Loss_m: 1.16320e-03, Loss_f: 2.39939e-08,Loss_ut: 8.34060e-07,Loss_l: 7.005e+00,lam:7.00510e+00,u_tt_norm:2.354e-03, time: 15.55
+log_loss_f_min -17.55183221466767 log_loss_min -6.74740085371308
+Iter 10000, Loss: 1.17450e-03, Loss_m: 1.16319e-03, Loss_f: 3.00151e-08,Loss_ut: 8.31097e-07,Loss_l: 7.009e+00,lam:7.00946e+00,u_tt_norm:2.353e-03, time: 15.55
+log_loss_f_min -17.587991599019645 log_loss_min -6.747540887942355
