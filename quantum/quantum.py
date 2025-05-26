@@ -524,7 +524,7 @@ print("load module")
 
 
 # In[load data] 
-data = sio.loadmat('../Datasets/harmonic_osc.mat')
+data = sio.loadmat('./harmonic_osc.mat')
 t = data['t'].flatten()[:,None]
 x = data['x'].flatten()[:,None]
 Exact_real = np.real(data['usol'])
