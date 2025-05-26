@@ -238,12 +238,6 @@ class PINNInference():
             retain_graph=True,
             create_graph=True
         )[0]#.unsqueeze(-1)
-        # Phi = torch.cat([torch.ones_like(u), u,u**2,x, t,
-        #                  w,x*w,x**2*w,t*w,t**2*w,
-        #                  w_x, x*w_x, x**2*w_x,t*w_x,t**2*w_x,
-        #                  v,x*v,x**2*v,t*v,t**2*v], 1) 
-#['','u', 'u**2', 'x','t', 'u_x', 'x*u_x', 'x**2*u_x','t*u_x', 't**2*u_x', 'u_xx.','x*u_xx', 'x**2*u_xx', 't*u_xx', 't**2*u_xx', 'u_t.', 'x*u_t', 'x**2*u_t', 't*u_t', 't**2*u_t']
-
         u_tt = v_t
         Phi = w_x
         #f = u_tt   -1.038220*w_x  #discovered equation for stage1
