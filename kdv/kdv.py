@@ -560,15 +560,18 @@ print("load module")
 
 
 # In[load data] 
-data = sio.loadmat('/data/home/liuyulong/Datasets/kdv.mat')
+data = sio.loadmat('./Datasets/kdv.mat')
 t = data['t'].flatten()[:,None]
 x = data['x'].flatten()[:,None]
 Exact = np.real(data['usol']).T
-#Exact = np.round(1*Exact,1)/1 #0.05,0.02,0.01
+# quantization noise
+#Exact = np.round(10*Exact,1)/10 #0.01
+#Exact = np.round(5*Exact,1)/5 #0.02
+#Exact = np.round(2*Exact,1)/2 #0.05
 dt = t[1]-t[0]
 dx = x[2]-x[1]
 X, T = np.meshgrid(x,t)
-
+# gaussian noise
 noise=0.3
 Exact = Exact + noise*np.std(Exact)*np.random.randn(Exact.shape[0], Exact.shape[1])
 measurement = np.hstack((X.flatten()[:,None], T.flatten()[:,None],Exact.flatten()[:,None] )) 
