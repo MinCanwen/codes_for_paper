@@ -1,13 +1,9 @@
 import os
 pid = os.getpid()
 print(f"Current process ID: {pid}")
-# 使用字符串格式化来构造文件夹路径
-# 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 构建输出文件夹路径
 output_dir = os.path.join(current_dir, f"0g_1tp_{pid}")
 print(output_dir)
-# 如果目录不存在，则创建
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 import numpy as np
@@ -25,13 +21,12 @@ import itertools
 import random
 #rhs_des = ['','u', 'u_xx.', 'u_t.']
 rhs_des = ['','u', 'u**2', 'u**3', 'u_x', 'u*u_x', 'u**2*u_x',
-                           'u3*u_x', 'u_xx.','u*u_xx', 'u**2*u_xx', 'u3*u_xx', 'u_t.', 'u*u_t', 'u**2*u_t', 'u3*u_t']
+                    'u3*u_x', 'u_xx.','u*u_xx', 'u**2*u_xx', 'u3*u_xx', 'u_t.', 'u*u_t', 'u**2*u_t', 'u3*u_t']
 def print_pde(w, rhs_description, ut = 'u_tt'):
     if isinstance(w, np.ndarray):
         lambda_1_value = w
     else:
-        lambda_1_value = w.detach().cpu().numpy()  # 获取当前 lambda_1 并转为 numpy 数组
-    #lambda_1_history.append(lambda_1_value)
+        lambda_1_value = w.detach().cpu().numpy() 
     pde = ut + ' = '
     first = True
     for i in range(len(w)):
@@ -75,16 +70,16 @@ loss_record_list = []
 diff_list = []
 
 
-seed = 3428  # 随机种子
+seed = 3428  
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
-torch.cuda.manual_seed_all(seed)  # 如果用多卡或者GPU
+torch.cuda.manual_seed_all(seed)  
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 class Net(nn.Module):
-    def makedense(self,myinput,myoutput):#用函数创建重复的层
+    def makedense(self,myinput,myoutput):
         dense=torch.nn.Sequential(torch.nn.Linear(myinput,myoutput),)
         return dense
     
@@ -95,7 +90,7 @@ class Net(nn.Module):
         """
         super(Net, self).__init__()
         layers_seq = list()
-        self.lin1=nn.Linear(layers[0], layers[1])#torch.sin(torch.nn.Linear(layers[0], layers[1]))
+        self.lin1=nn.Linear(layers[0], layers[1])
         self.lin1.weight.data.normal_(0,1)
         self.lin1.bias.data.fill_(0.)
         self.lin1.weight.requires_grad = True

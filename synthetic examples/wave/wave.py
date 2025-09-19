@@ -1,15 +1,13 @@
 import os
+#Specify the output directory
 pid = os.getpid()
 print(f"Current process ID: {pid}")
-# 使用字符串格式化来构造文件夹路径
-# 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 构建输出文件夹路径
 output_dir = os.path.join(current_dir, f"5g_1tp_{pid}")
 print(output_dir)
-# 如果目录不存在，则创建
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
+
 import numpy as np
 from sklearn.linear_model import OrthogonalMatchingPursuit
 from numpy import linalg as LA
@@ -23,14 +21,34 @@ from mpl_toolkits.mplot3d import Axes3D
 import scipy.io as sio
 import itertools
 import random
+
 #rhs_des = ['','u', 'u_xx.', 'u_t.']
 rhs_des = ['','u', 'u**2', 'u**3', 'u_x', 'u*u_x', 'u**2*u_x',
-                           'u3*u_x', 'u_xx.','u*u_xx', 'u**2*u_xx', 'u3*u_xx', 'u_t.', 'u*u_t', 'u**2*u_t', 'u3*u_t']
+        'u3*u_x', 'u_xx.','u*u_xx', 'u**2*u_xx', 'u3*u_xx', 'u_t.', 'u*u_t', 'u**2*u_t', 'u3*u_t']
 def print_pde(w, rhs_description, ut = 'u_tt'):
+    """
+    Output the identified PDE in symbolic form.
+
+    Parameters
+    ----------
+    w : np.ndarray or torch.Tensor
+        Identified coefficients of candidate terms.
+    rhs_description : list of str
+        List of candidate term expressions (right-hand side descriptors).
+        For example: ['','u','u**2','u_x','u*u_x', ...].
+    ut : str, optional (default = 'u_tt')
+        The left-hand side term of the PDE (e.g. 'u_t', 'u_tt').
+
+    Returns
+    -------
+    None
+        Prints the PDE in the form:
+            ut = (coeff1)*term1 + (coeff2)*term2 + ...
+    """
     if isinstance(w, np.ndarray):
         lambda_1_value = w
     else:
-        lambda_1_value = w.detach().cpu().numpy()  # 获取当前 lambda_1 并转为 numpy 数组
+        lambda_1_value = w.detach().cpu().numpy()  
     #lambda_1_history.append(lambda_1_value)
     pde = ut + ' = '
     first = True
@@ -64,159 +82,134 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 print(f"Using device: {device}")
 
-lambda_list = []
-lambda_list2 = []
-loss_f_list=[]
-loss_m_list=[]
-loss_ut_list=[]
-loss_l_list=[]
-term_list = []
-loss_record_list = []
-diff_list = []
+lambda_list = []       # Stores the identified PDE coefficients (λ) at each iteration for analysis or visualization
+lambda_list2 = []      # Stores an alternative set of coefficients, from different regularization or training stages
+loss_f_list = []       # Stores the PDE residual loss history
+loss_m_list = []       # Stores the measurement/data fitting loss history
+loss_ut_list = []      # Stores the loss associated with time derivative terms (e.g., u_t or u_tt)
+loss_l_list = []       # Stores the regularization or other auxiliary loss history
+term_list = []         # Stores selected candidate terms or their importance information
+loss_record_list = []  # Stores the total loss history over iterations
+diff_list = []         # Stores the difference between predictions and ground truth (or between methods)
 
 
-seed = 3428  # 随机种子
+
+seed = 3428  # random seed 
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
-torch.cuda.manual_seed_all(seed)  # 如果用多卡或者GPU
+torch.cuda.manual_seed_all(seed)  
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 class Net(nn.Module):
-    def makedense(self,myinput,myoutput):#用函数创建重复的层
-        dense=torch.nn.Sequential(torch.nn.Linear(myinput,myoutput),)
+    def makedense(self, myinput, myoutput):
+        """
+        Create a simple dense (fully connected) layer.
+
+        Args:
+            myinput (int): number of input features
+            myoutput (int): number of output features
+
+        Returns:
+            torch.nn.Sequential: a sequential container with a single linear layer
+        """
+        dense = torch.nn.Sequential(
+            torch.nn.Linear(myinput, myoutput),
+        )
         return dense
-    
+
     def __init__(self, layers):
         """
+        Initialize the neural network with given layer sizes.
+
         Args:
-            layers: 数组, 存放神经网络每一层的节点数
+            layers (list[int]): a list defining the number of neurons in each layer.
+                                Example: [input_dim, hidden1, hidden2, ..., output_dim]
         """
         super(Net, self).__init__()
-        layers_seq = list()
-        self.lin1=nn.Linear(layers[0], layers[1])#torch.sin(torch.nn.Linear(layers[0], layers[1]))
-        self.lin1.weight.data.normal_(0,1)
-        self.lin1.bias.data.fill_(0.)
-        self.lin1.weight.requires_grad = True
-        self.lin1.bias.requires_grad = True
+        # First linear layer (with normal initialization and bias set to zero)
+        self.lin1 = nn.Linear(layers[0], layers[1])
+        self.lin1.weight.data.normal_(0, 1)   # Initialize weights with normal distribution
+        self.lin1.bias.data.fill_(0.)         # Initialize bias to zeros
+        self.lin1.weight.requires_grad = True # Enable gradient computation for weights
+        self.lin1.bias.requires_grad = True   # Enable gradient computation for bias
+
+        # Count of layers
         self.layers_cnt = len(layers) - 1
-        self.branch_conv = None  # 用于保存卷积分支
-        self.merge_layer = None  # 用于特征融合
-        self.lin2=nn.Linear(layers[1], layers[2])
-        self.tanh = nn.Tanh()  # Tanh激活函数
-        self.branch_conv = nn.Sequential( # 
-            nn.Conv2d(1, 1, kernel_size=4, stride=1, padding=2),  # 4x4 卷积核
-            nn.Tanh(),
-            nn.Flatten()
-        )
-                # 构建主干网络
-        for i in range(1,len(layers) - 2):
-            # if i == 2:
-            #     layers_seq.append(('hidden_layer_%d' % i, nn.Linear(layers[i]+121, layers[i+1])))
-            # else:
-            layers_seq.append(('hidden_layer_%d' % i, nn.Linear(layers[i], layers[i+1])))
-            layers_seq.append(('actvation_%d' % i, nn.Tanh()))
+        # Sequential container for hidden layers and activations
+        layers_seq = list()
+        for i in range(1, len(layers) - 2):
+            layers_seq.append(('hidden_layer_%d' % i, nn.Linear(layers[i], layers[i + 1])))
+            layers_seq.append(('activation_%d' % i, nn.Tanh()))  # Tanh activation function
+
+        # Output layer (linear, no activation)
         layers_seq.append(('output_layer', nn.Linear(layers[-2], layers[-1])))
 
+        # Combine layers into a single sequential module
         self.layers = nn.Sequential(OrderedDict(layers_seq))
-#         self.prev_mask = torch.zeros(16, 1) <= 1
-#         self.mask = torch.zeros(16, 1) <= 1
-#         self.loss_f = 1
-#         self.thresholding=True
-#         print(self.prev_mask)
 
     def forward(self, x):
-        out = torch.sin(self.lin1(x))
-        # branch_input = out  # 保存分支输入
-        # x = self.tanh( self.lin2(out) ) # 第一层
+        """
+        Forward pass through the network.
 
-        # # 分支卷积操作
-        # branch_output = self.branch_conv(branch_input.unsqueeze(1).reshape(-1,1, 10, 10))  # 添加通道维度 (N, 1, 10, 10)
-        # merged_output = torch.cat([x, branch_output], dim=1)
-        # 特征融合
-        output = self.layers(out)
+        Args:
+            x (torch.Tensor): input tensor
+
+        Returns:
+            torch.Tensor: network output
+        """
+        out = torch.sin(self.lin1(x))  # Apply sine activation on the first layer
+        output = self.layers(out)      # Pass through the remaining layers
         return output
 
-#     def prune_and_freeze_weights(self, n=1):
-#         # 获取非零值（取绝对值不为零的元素）
-#         non_zero_lambda_1 = model.lambda_1[torch.abs(model.lambda_1) != 0]
-    
-#         if self.thresholding:
-#             if non_zero_lambda_1.numel() > 0 and np.log(model.loss_f_record) < np.log(self.loss_f) + 0.1:
-#                 # 判断是否剩余的非零值大于 n
-#                 if non_zero_lambda_1.numel() > n:
-#                     # 获取最小的 n 个非零值的索引
-#                     _, indices = torch.topk(torch.abs(non_zero_lambda_1), n, largest=False)
-#                     min_n_non_zero_values = non_zero_lambda_1[indices]
-#                     print(min_n_non_zero_values)
-#                     self.prev_mask = torch.abs(model.lambda_1) <= 0
-#                     print("prev_mask",self.prev_mask)
-#                     # 将小于最小非零值的元素置为0
-#                     self.mask = torch.abs(model.lambda_1) <= torch.abs( min_n_non_zero_values[-1])  # 保证压缩最小的 n 个值
-#                     model.lambda_1.data[self.mask] = 0
-#                     print("mask",self.mask)
-#                     self.loss_f = model.loss_f_record
-#                     print(f"Pruning the smallest {n} weights for lambda_1.")
-#                 else:
-#                     # 若剩余的非零值小于或等于 n，则只压缩一个最小值
-#                     min_non_zero_value = torch.abs(non_zero_lambda_1).min().item()
-#                     self.prev_mask = torch.abs(model.lambda_1) <= 0
-#                     self.mask = torch.abs(model.lambda_1) <= min_non_zero_value
-#                     model.lambda_1.data[self.mask] = 0
-#                     self.loss_f = model.loss_f_record
-#                     print("Pruning the smallest weight for lambda_1.")
-                
-#             elif model.loss_f_record > self.loss_f:
-#                 # 若当前残差损失变差，恢复上次置0的位置为0.5
-#                 self.mask = self.prev_mask
-#                 self.thresholding = False
-#                 # model.lambda_1.data[self.prev_mask] = 0.5
-#                 print("Restoring previous mask")
-#         else:
-#             print("mask freezing")
 
-
-       
 
 class PINNInference():
     def __init__(self, 
-                 x_max=1,
-                 t_max=1,
-                 measurement=None,
-                 f=None,
-                 init_xt=None,
-                 layers=None,
-                 Nf = 0,
-                 a=0., b=0., c=0., d=0.,
-                 device=None):
+                x_max=1,
+                t_max=1,
+                measurement=None,
+                f=None,
+                init_xt=None,
+                layers=None,
+                Nf=0,
+                a=0., b=0., c=0., d=0.,
+                device=None):
         """
-        
+        Initialize the Physics-Informed Neural Network (PINN) inference object.
+
         Args:
-            measurement: 训练集中的观察点(x, t, u)
-            f: 训练集中内部点的(x, t, u), 用于计算pde residual
-            t_max,x_max: 时间最大值,用于归一化
-            layers: 网络结构
-            device: 设备
+            x_max (float): maximum value of x for normalization
+            t_max (float): maximum value of t for normalization
+            measurement (np.array or torch.Tensor): observation points in the training set, shape (N, 4) [x, t, u, real]
+            f (np.array or torch.Tensor): interior points in the training set for computing PDE residuals, shape (Nf, 3) [x, t, u]
+            init_xt (np.array or torch.Tensor): initial condition points (x, t)
+            layers (list[int]): network architecture defining neurons in each layer
+            Nf (int): number of interior points for PDE residual evaluation
+            a, b, c, d (float): coefficients used in the PDE
+            device (torch.device): device to store tensors (CPU or GPU)
         """
-        self.device=device        
-        
-        # 预先sample，直接读入device，在迭代中不变
+        self.device = device        
+
+        # Pre-sample and move to device; these remain fixed during training
         if measurement is not None:
-            self.m_x = torch.tensor(measurement[:, 0:1], requires_grad=True).float().to(self.device)
-            self.m_t = torch.tensor(measurement[:, 1:2], requires_grad=True).float().to(self.device)  
-            self.m_u = torch.tensor(measurement[:, 2:3]).float().to(device)
-            self.real = torch.tensor(measurement[:, 3:4]).float().to(device)
+            self.m_x = torch.tensor(measurement[:, 0:1], requires_grad=True).float().to(self.device)  # x coordinates
+            self.m_t = torch.tensor(measurement[:, 1:2], requires_grad=True).float().to(self.device)  # t coordinates
+            self.m_u = torch.tensor(measurement[:, 2:3]).float().to(self.device)                     # observed u values
+            self.real = torch.tensor(measurement[:, 3:4]).float().to(self.device)                    # "real" or target values for evaluation
 
-        # f data
+        # PDE residual data points
         if f is not None:
-            self.f_x = torch.tensor(f[:, 0:1], requires_grad=True).float().to(self.device)
-            self.f_t = torch.tensor(f[:, 1:2], requires_grad=True).float().to(self.device)  
+            self.f_x = torch.tensor(f[:, 0:1], requires_grad=True).float().to(self.device)  # interior x points
+            self.f_t = torch.tensor(f[:, 1:2], requires_grad=True).float().to(self.device)  # interior t points
 
+        # Initial condition points
         if init_xt is not None:
-            self.init_x = torch.tensor(init_xt[:, 0:1], requires_grad=True).float().to(self.device)
-            self.init_t = torch.tensor(init_xt[:, 1:2], requires_grad=True).float().to(self.device)
+            self.init_x = torch.tensor(init_xt[:, 0:1], requires_grad=True).float().to(self.device)  # initial x
+            self.init_t = torch.tensor(init_xt[:, 1:2], requires_grad=True).float().to(self.device)  # initial t
 
+        # Network and PDE parameters
         self.layers = layers
         self.a = a
         self.b = b
@@ -225,175 +218,238 @@ class PINNInference():
         self.x_max = x_max
         self.t_max = t_max
         self.Nf = Nf
-        self.gaussian_matrix =  torch.randn(self.Nf, self.Nf) 
-        
-        # settings lambda初值
+        self.gaussian_matrix = torch.randn(self.Nf, self.Nf)  # random Gaussian matrix, possibly for regularization or perturbation
+
+        # Initialize lambda parameter for loss weighting
         self.lambda_1 = torch.zeros(16, 1, requires_grad=True).to(device)
-        #self.lambda_1 = torch.tensor([10.0], requires_grad=True).to(device)
-        
         self.lambda_1 = torch.nn.Parameter(self.lambda_1)
-        
-        # deep neural networks
+
+        # Initialize the deep neural network
         self.dnn = Net(layers).to(device)
-        self.dnn.register_parameter('lambda_1', self.lambda_1) 
+        self.dnn.register_parameter('lambda_1', self.lambda_1)  # attach lambda_1 as a learnable parameter of the network
+
+        # Initialize loss tracking
         self.loss_f_record = 1
         self.loss_record = 1
+
+        # Placeholder for optimizer
         self.optimizer = None        
+
+        # Iteration counter
         self.iter = 0
+
         
 
-    def net_u(self, x, t):  
-        x1 = 0.2*(x-self.a)/self.b
-        t1 = 0.2*(t-self.c)/self.d
-        uu = self.dnn(torch.cat([x1, t1], dim=1))#torch.cat拼接x,t矩阵，竖向
-#         a = self.dnn(torch.cat([x, t], dim=1))#torch.cat拼接x,t矩阵，竖向
-        u = uu[:,0:1]
-        w = uu[:,1:2]
-        v = uu[:,2:3]
-        w_x = uu[:,3:4]
-        v_t = uu[:,4:5]
-        #print(u.shape)
-        return u,w,v,w_x,v_t
-    
-    def net_f(self, x ,t):
-        """ 计算pde residual
+    def net_u(self, x, t):
         """
-        # self.lambda_1 = torch.flatten(self.dnn.branch_conv[0].weight).unsqueeze(1) #self.dnn.layers.hidden_layer_1.bias.unsqueeze(1)
-        #lambda_1 = self.lambda_1 ** 2    
-        u,w,v,w_x,v_t = self.net_u(x,t)
-        Phi = torch.cat([torch.ones_like(u), u,u**2,u**3, 
-                         w,u*w,u**2*w,u**3*w,
-                         w_x, u*w_x, u**2*w_x,u**3*w_x,
-                         v,u*v,u**2*v,u**3*v], 1) 
-        # Phi = torch.cat([torch.ones_like(u), u,w_x,v], 1) 
+        Compute the network output and its intermediate components for given inputs x and t.
 
+        Args:
+            x (torch.Tensor): input tensor for spatial coordinates, shape (N, 1)
+            t (torch.Tensor): input tensor for temporal coordinates, shape (N, 1)
+
+        Returns:
+            u (torch.Tensor): predicted primary variable, shape (N, 1)
+            w (torch.Tensor): predicted secondary variable, shape (N, 1)
+            v (torch.Tensor): predicted tertiary variable, shape (N, 1)
+            w_x (torch.Tensor): derivative-related term (w_x), shape (N, 1)
+            v_t (torch.Tensor): derivative-related term (v_t), shape (N, 1)
+        """
+        # Normalize inputs (rescale x and t)
+        x1 = 0.2 * (x - self.a) / self.b
+        t1 = 0.2 * (t - self.c) / self.d
+
+        # Concatenate x and t along the last dimension (vertical stacking) and pass through the network
+        uu = self.dnn(torch.cat([x1, t1], dim=1))
+
+        # Extract different components from the network output
+        u = uu[:, 0:1]   # primary output
+        w = uu[:, 1:2]   # secondary output
+        v = uu[:, 2:3]   # tertiary output
+        w_x = uu[:, 3:4] # derivative or auxiliary term for PDE
+        v_t = uu[:, 4:5] # derivative or auxiliary term for PDE
+
+        # Return all extracted components
+        return u, w, v, w_x, v_t
+
+    
+    def net_f(self, x, t):
+        """
+        Compute the PDE residual for given inputs x and t.
+
+        Args:
+            x (torch.Tensor): spatial coordinates, shape (N, 1)
+            t (torch.Tensor): temporal coordinates, shape (N, 1)
+
+        Returns:
+            f (torch.Tensor): PDE residual, shape (N, 1)
+            Phi (torch.Tensor): feature matrix for regression term, shape (N, 16)
+            u_tt (torch.Tensor): second derivative term extracted from network (v_t), shape (N, 1)
+        """
+        # Evaluate the network and extract relevant components
+        u, w, v, w_x, v_t = self.net_u(x, t)
+
+        # Construct the library of candidate PDE terms (features for sparse regression)
+        Phi = torch.cat([
+            torch.ones_like(u),    # constant term
+            u, u**2, u**3,         # powers of u
+            w, u*w, u**2*w, u**3*w,  # interactions with w
+            w_x, u*w_x, u**2*w_x, u**3*w_x,  # interactions with derivative w_x
+            v, u*v, u**2*v, u**3*v  # interactions with v
+        ], dim=1)
+
+        # Extract the second derivative term u_tt (here represented by v_t)
         u_tt = v_t
-        f = u_tt- torch.matmul(Phi, self.lambda_1)
-        return f,Phi,u_tt
 
-    def net_ut(self, x ,t):
-        """ 计算pde residual
+        # Compute PDE residual: u_tt - Phi * lambda
+        f = u_tt - torch.matmul(Phi, self.lambda_1)
+
+        return f, Phi, u_tt
+
+
+    def net_ut(self, x, t):
         """
-        #lambda_1 = self.lambda_1 ** 2    
-        u,w,v,w_x,v_t = self.net_u(x,t)
-        u_t1,w_t1,v_t1,_,_ = self.net_u(x,t-0.1)
-        u_t2,w_t2,v_t2,_,_  = self.net_u(x,t+0.1)
-        u_x1,w_x1,v_x1,_,_  = self.net_u(x-0.1,t)
-        u_x2,w_x2,v_x2 ,_,_ = self.net_u(x+0.1,t)
-        f = (v-(u_t2-u_t1)/0.2)** 2 +(w- (u_x2-u_x1)/0.2)** 2 +((u_t2+u_t1-2*u)/0.01-v_t)**2+((u_x2+u_x1-2*u)/0.01-w_x)**2
+        Compute the derivative residual for given inputs x and t.
+        This evaluates the difference between network-predicted derivatives
+        and finite-difference approximations of the derivatives.
+
+        Args:
+            x (torch.Tensor): spatial coordinates, shape (N, 1)
+            t (torch.Tensor): temporal coordinates, shape (N, 1)
+
+        Returns:
+            f (torch.Tensor): derivative residual, shape (N, 1)
+        """
+        # Evaluate network outputs at the original points
+        u, w, v, w_x, v_t = self.net_u(x, t)
+
+        # Finite difference approximations: backward and forward in time
+        u_t1, w_t1, v_t1, _, _ = self.net_u(x, t - 0.1)  # u, w, v at t-Δt
+        u_t2, w_t2, v_t2, _, _ = self.net_u(x, t + 0.1)  # u, w, v at t+Δt
+
+        # Finite difference approximations: backward and forward in space
+        u_x1, w_x1, v_x1, _, _ = self.net_u(x - 0.1, t)  # u, w, v at x-Δx
+        u_x2, w_x2, v_x2, _, _ = self.net_u(x + 0.1, t)  # u, w, v at x+Δx
+
+        # Compute residuals based on finite difference approximations
+        f = (
+            (v - (u_t2 - u_t1) / 0.2) ** 2          # time derivative residual for u_t ≈ v
+            + (w - (u_x2 - u_x1) / 0.2) ** 2        # space derivative residual for u_x ≈ w
+            + ((u_t2 + u_t1 - 2 * u) / 0.01 - v_t) ** 2  # second-order time derivative residual
+            + ((u_x2 + u_x1 - 2 * u) / 0.01 - w_x) ** 2  # second-order space derivative residual
+        )
+
         return f
+
     
-    def train(self, nIter,lam=None,Ir=0.001,lambda1=1.0, lambda2=1.0): # nIter is the number of ADO loop
-            
-        for it in range(nIter):
-            # Loop of Adam optimization            
-            print('Adam begins')             
-            self.train_inverse(niter=2000,Ir=Ir, plotting=True,lambda1=lambda1, lambda2=lambda2,plot_num=200)
-            # Loop of STRidge optimization
-            print(self.dnn.lambda_1)
-            self.callTrainSTRidge()
-            print(self.dnn.lambda_1)
     
-    def train_inverse(self, niter=0,Ir=0.001, plotting=False, lambda1=1.0, lambda2=1.0,lambda3=0.00001,lambda4=1.0,plot_num=40,freezing=False):
-        """ mse = lambda1 * mse_u + lambda2 * mse_f
+    def train_inverse(self, niter=0, Ir=0.001, plotting=False,
+                    lambda1=1.0, lambda2=1.0, lambda3=0.00001, lambda4=1.0,
+                    plot_num=40, freezing=False):
         """
+        Train the PINN for inverse problems using a composite loss function:
+            mse = lambda1 * mse_u + lambda2 * mse_f + lambda4 * mse_ut + lambda3 * mse_l0
+
+        Args:
+            niter (int): number of training iterations
+            Ir (float): learning rate for AdamW optimizer
+            plotting (bool): whether to plot the training loss curve
+            lambda1, lambda2, lambda3, lambda4 (float): weights for each loss term
+            plot_num (int): frequency of logging and plotting (iterations)
+            freezing (bool): whether to freeze lambda_1 entries masked as zero during training
+        """
+        # Initialize optimizer (AdamW) for network parameters
         self.optimizer = torch.optim.AdamW(self.dnn.parameters(), lr=Ir, weight_decay=1e-2)
+
+        # Update learning rate for all parameter groups
         for param_group in self.optimizer.param_groups:
-            param_group['lr'] = Ir # 例如将学习率减少10倍
-        self.dnn.train()
+            param_group['lr'] = Ir
+
+        self.dnn.train()  # set network to training mode
         start_time = time.time()
-        
-        loss_list = []
-        
+
+        loss_list = []  # record total loss over iterations
         t_list = range(niter)
-#         f_pred,phi,u_tt = self.net_f(self.f_x, self.f_t)
-#         u_tt_norm = torch.mean(u_tt**2).detach()
-#         phi_norm = torch.mean(phi**2, dim=0).detach()
-#         self.loss_f_record = 1 
-#         self.loss_record = 1
-        
-        mask = (model.lambda_1 == 0)        # 获取当前 mask（lambda == 0 的位置）
+
+        # Identify current mask where lambda_1 is zero
+        mask = (self.lambda_1 == 0)
         print(mask)
+
         for it in range(niter):
-            f_pred,phi,u_tt = self.net_f(self.f_x, self.f_t) #function
-            m_pred,w,v,_,_ = self.net_u(self.m_x, self.m_t) #measurement
-            ut_pred = self.net_ut(self.m_x, self.m_t) #function
-            
-            loss_m = torch.mean((1+torch.abs(self.m_u))*(m_pred - self.m_u) ** 2)
-            loss_f = torch.mean((1)*f_pred ** 2)
-            loss_ut = torch.mean((1)*ut_pred)
-            loss_l = torch.sum(torch.abs(self.lambda_1))
-            loss =  lambda1*loss_m + lambda2*loss_f + lambda3*loss_l + lambda4*loss_ut
-#             if loss_f.item() < self.loss_f_record:
-#                 self.loss_f_record = loss_f.item()
-#             if loss.item() < self.loss_record:
-#                 self.loss_record = loss.item()
-            
+            # Compute PDE residual, measurement prediction, and derivative residual
+            f_pred, phi, u_tt = self.net_f(self.f_x, self.f_t)        # PDE residual at interior points
+            m_pred, w, v, _, _ = self.net_u(self.m_x, self.m_t)       # network predictions at measurement points
+            ut_pred = self.net_ut(self.m_x, self.m_t)                 # derivative residuals
+
+            # Compute each loss component
+            loss_m = torch.mean((1 + torch.abs(self.m_u)) * (m_pred - self.m_u) ** 2)  # weighted MSE for measured data
+            loss_f = torch.mean(f_pred ** 2)                                           # MSE for PDE residual
+            loss_ut = torch.mean(ut_pred)                                              # derivative residual loss
+            loss_l = torch.sum(torch.abs(self.lambda_1))                                # L1 regularization for lambda_1
+
+            # Composite loss
+            loss = lambda1 * loss_m + lambda2 * loss_f + lambda3 * loss_l + lambda4 * loss_ut
+
+            # Backpropagation
             self.optimizer.zero_grad()
-            loss.backward()  
-                
+            loss.backward()
             self.optimizer.step()
+
+            # Optionally freeze masked lambda_1 entries
             if freezing:
                 with torch.no_grad():
                     self.lambda_1[mask] = 0
 
+            # Record losses for later analysis
             loss_list.append(loss.item())
-            
             lambda_sum = torch.sum(torch.abs(self.lambda_1))
-            # 将 para 转换为 NumPy 数组（或如果希望存储 Tensor，可以省略 .numpy()）
-            para = self.lambda_1.clone()
-            para_numpy = para.detach().cpu().numpy()
-#             diff = torch.mean((m_pred - self.real)**2)
-            # 将 para 存入列表
-            lambda_list.append(para_numpy)
-            loss_f_list.append(loss_f.item())   
-            loss_l_list.append(loss_l.item())  
-            loss_m_list.append(loss_m.item()) 
-            loss_ut_list.append(loss_ut.item())  
-#             diff_list.append(diff.item())  
-#             # phi_norm = torch.mean(phi**2, dim=0).detach()
-#             u_tt_norm = torch.mean(u_tt**2).detach()
-#             phi_norm = torch.mean(phi**2, dim=0).detach()
-#             para2 = para.T*(phi_norm)/u_tt_norm
-#             para_numpy2 = para2.detach().cpu().numpy()
-#             # 将 para 存入列表
-#             lambda_list2.append(para_numpy2)
+            para_numpy = self.lambda_1.detach().cpu().numpy()  # convert lambda_1 to numpy
 
+            # Store parameter and loss components globally
+            lambda_list.append(para_numpy)
+            loss_f_list.append(loss_f.item())
+            loss_l_list.append(loss_l.item())
+            loss_m_list.append(loss_m.item())
+            loss_ut_list.append(loss_ut.item())
+
+            # Logging
             if it % plot_num == 0:
                 elapsed = time.time() - start_time
                 print(
-                    'Iter %d, Loss: %.5e, Loss_m: %.5e, Loss_f: %.5e,Loss_ut: %.5e,Loss_l: %.3e,lam:%.5e, time: %.2f' % ( \
-                     it, loss.item(), loss_m.item(), loss_f.item(),loss_ut.item(),loss_l.item(),lambda_sum.item(),elapsed)
+                    'Iter %d, Loss: %.5e, Loss_m: %.5e, Loss_f: %.5e, Loss_ut: %.5e, Loss_l: %.3e, lam: %.5e, time: %.2f' % (
+                        it, loss.item(), loss_m.item(), loss_f.item(), loss_ut.item(),
+                        loss_l.item(), lambda_sum.item(), elapsed
+                    )
                 )
-
                 start_time = time.time()
-                #u_tt_norm = torch.mean(u_tt**2).detach()
-                #phi_norm = torch.mean(phi**2, dim=0).detach()
-                # print(phi_norm)
-                print('log_loss_f_min',np.log(self.loss_f_record),'log_loss_min',np.log(self.loss_record))
-        
-        loss_record_list.append(model.loss_f_record)
+                print('log_loss_f_min', np.log(self.loss_f_record), 'log_loss_min', np.log(self.loss_record))
 
-        # 画loss关于iter的图
-        begin_iter = 0
+        # Save final loss record
+        loss_record_list.append(self.loss_f_record)
+
+        # Plot training loss curve if requested
         if plotting:
-            t_array = np.array(t_list)[begin_iter:]
-            loss_array = np.array(loss_list)[begin_iter:]
+            t_array = np.array(t_list)
+            loss_array = np.array(loss_list)
             plt.figure(figsize=(10, 8))
             plt.title('Train loss')
             plt.plot(t_array, loss_array, color='red', label='loss')
             plt.legend()
-            plt.xlabel('iter')
-            plt.ylabel('mse')
+            plt.xlabel('iteration')
+            plt.ylabel('MSE')
             plt.ylim((0, loss_array.max() + 0.01))
             plt.show()
-            
+
+
+# =============================================================================
+#        Inspired by Rudy, Samuel H., et al. "Data-driven discovery of partial differential equations."
+#        Science Advances 3.4 (2017): e1602614.
+# =============================================================================                
     def callTrainSTRidge(self,lam = 1e-5,d_tol = 0.05,maxit = 50,STR_iters = 50,normalize = 2):
         lam = lam
         d_tol = d_tol
         maxit = maxit
         STR_iters = STR_iters
-         
         l0_penalty = None
         
         normalize = normalize#原本是2   
@@ -401,20 +457,16 @@ class PINNInference():
         print_best_tol = True 
         print_ls = True
         f_pred,Phi_pred,u_tt_pred  = self.net_f(self.f_x,self.f_t)
-         
+
         lambda2 = self.TrainSTRidge(Phi_pred, u_tt_pred, lam, d_tol, maxit, STR_iters, l0_penalty, normalize, split,print_best_tol,print_ls)     
-         
+
         print('lambda2',lambda2)
         self.lambda_1 = torch.tensor(lambda2, requires_grad=True).float().to(device)
         self.lambda_1 = torch.nn.Parameter(self.lambda_1)
         self.dnn.register_parameter('lambda_1', self.lambda_1)                  
     
     def TrainSTRidge(self, R1, Ut1, lam, d_tol, maxit, STR_iters = 10, l0_penalty = None, normalize = 2, split = 0.8, 
-                     print_best_tol = False,print_ls = False):            
-# =============================================================================
-#        Inspired by Rudy, Samuel H., et al. "Data-driven discovery of partial differential equations."
-#        Science Advances 3.4 (2017): e1602614.
-# =============================================================================    
+                    print_best_tol = False,print_ls = False):            
         R0 = R1.detach().cpu().numpy()   
         Ut = Ut1.detach().cpu().numpy()
         self.lambda_1 = self.lambda_1.detach().cpu().numpy()
@@ -582,7 +634,6 @@ def figure_compare(name='1'):
     
     vnorm = mpl.colors.Normalize(vmin=np.min(h), vmax=np.max(h))
     #scipy.io.savemat('diffusion.mat',{'u':model_prediction,'turth':h,'X':B,'T':C,'init_sample':init_xt,'bound_l':left_bound_xt,'bound_r':right_bound_xt,'f_sample':f_xt})
-    # 绘制预测
     fig, ax = plt.subplots(2)
     
     ax[0].set_title("Results")
@@ -609,7 +660,6 @@ def figure_compare(name='1'):
     )
     fig.colorbar(im2, ax=ax[1])
     output_file = os.path.join(output_dir, f'{name}_whole.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
@@ -617,18 +667,16 @@ def figure_compare(name='1'):
     u2 = u[6,:]
     h2 = h[6,:]
      
-    #开始画图
     #x_sample_i = sample(x,50)
     sub_axix = filter(lambda x:x%200 == 0, x)
     #plt.title('Initial condition')
     plt.plot(x,u2 , 'r-',linewidth = 2, label='Input')
     plt.plot(x, h2 , 'k--',linewidth =2, label='ture result')
-    plt.legend() # 显示图例
+    plt.legend() 
      
     plt.xlabel('x ')
     plt.ylabel('value ')
     output_file = os.path.join(output_dir, f'{name}_fixed_t.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
@@ -637,17 +685,15 @@ def figure_compare(name='1'):
     #plt.title('Initial condition')
     plt.plot(t,u[:,128] , 'r-',linewidth = 2, label='Input')
     plt.plot(t, h[:,128] , 'k--',linewidth =2, label='ture result')
-    plt.legend() # 显示图例
+    plt.legend() 
     plt.xlabel('t')
     plt.ylabel('value ')
     output_file = os.path.join(output_dir, f'{name}_fixed_x.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
 
 def figure_compare2():        
-    ## 做预测
     t_lower = t[0]
     x_lower = x[0]
     t_upper = t[100]
@@ -664,7 +710,6 @@ def figure_compare2():
     
     vnorm = mpl.colors.Normalize(vmin=np.min(h), vmax=np.max(h))
     #scipy.io.savemat('diffusion.mat',{'u':model_prediction,'turth':h,'X':B,'T':C,'init_sample':init_xt,'bound_l':left_bound_xt,'bound_r':right_bound_xt,'f_sample':f_xt})
-    # 绘制预测
     fig, ax = plt.subplots(2)
     
     ax[0].set_title("Results")
@@ -691,7 +736,6 @@ def figure_compare2():
     )
     fig.colorbar(im2, ax=ax[1])
     output_file = os.path.join(output_dir, 'whole2.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
@@ -699,18 +743,16 @@ def figure_compare2():
     u2 = u[50,:]
     h2 = h[25,:]
      
-    #开始画图
     #x_sample_i = sample(x,50)
     sub_axix = filter(lambda x:x%200 == 0, x)
     #plt.title('Initial condition')
     plt.plot(x,u2 , 'r-',linewidth = 2, label='Input')
     plt.plot(x, h2 , 'k--',linewidth =2, label='ture result')
-    plt.legend() # 显示图例
+    plt.legend() 
      
     plt.xlabel('x ')
     plt.ylabel('value ')
     output_file = os.path.join(output_dir, 'fixed_t2.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
@@ -719,11 +761,10 @@ def figure_compare2():
     #plt.title('Initial condition')
     plt.plot(t_2,u[:,128] , 'r-',linewidth = 2, label='Input')
     plt.plot(t[0:100], h[:,128] , 'k--',linewidth =2, label='ture result')
-    plt.legend() # 显示图例
+    plt.legend() 
     plt.xlabel('t')
     plt.ylabel('value ')
     output_file = os.path.join(output_dir, 'fixed_x2.png')
-# 保存图片为高分辨率 PNG
     plt.savefig(output_file, dpi=300, bbox_inches='tight') 
     plt.show()
     plt.close()        
@@ -731,27 +772,51 @@ def figure_compare2():
 print("load module")
 
 
-# In[load data] 
-# In[load data] 
+# -----------------------------
+# Load data and define analytical solution
+# -----------------------------
+# Spatial and temporal domain boundaries
 x_lower = 0
 x_upper = np.pi
 t_lower = 0
 t_upper = 4
-a=1
-l=0.5
-w_1= np.sqrt(a**2-l**2/4)
-w_2= np.sqrt(4*a**2-l**2/4)
 
-def func2(x,t):
-    var1 = np.sin(x)*(np.exp(-l*t/2)*np.cos(w_1*t))
-    var1 = var1 +0.5*np.sin(2*x)*(np.exp(-l*t/2)*np.cos(w_2*t))  #+2*w_1*np.exp(-l*t/2)*np.sin(w_1*t)/l
+# Wave equation parameters
+a = 1       # wave speed coefficient
+l = 0.5     # damping coefficient
+
+# Compute frequencies for the analytical solution
+w_1 = np.sqrt(a**2 - l**2 / 4)
+w_2 = np.sqrt(4 * a**2 - l**2 / 4)
+
+def func2(x, t):
+    """
+    Analytical solution for a damped wave equation with two modes.
+
+    Args:
+        x (np.ndarray): spatial coordinate array
+        t (np.ndarray): temporal coordinate array
+
+    Returns:
+        np.ndarray: solution evaluated at (x, t)
+    """
+    # First mode: sin(x) * exp(-l t / 2) * cos(w1 t)
+    var1 = np.sin(x) * (np.exp(-l * t / 2) * np.cos(w_1 * t))
+
+    # Second mode: 0.5 * sin(2x) * exp(-l t / 2) * cos(w2 t)
+    var1 += 0.5 * np.sin(2 * x) * (np.exp(-l * t / 2) * np.cos(w_2 * t))
+
     return var1
-# 创建 2D 域（用于绘图和输入）
-x = np.linspace(x_lower, x_upper, 256)
-t = np.linspace(t_lower, t_upper, 200)
-X, T = np.meshgrid(x,t)
-Exact = func2(X,T)
 
+# Discretize the spatial and temporal domains
+x = np.linspace(x_lower, x_upper, 256)  # 256 spatial points
+t = np.linspace(t_lower, t_upper, 200)  # 200 time points
+# Create 2D meshgrid for evaluation
+X, T = np.meshgrid(x, t)
+# Evaluate analytical solution on the meshgrid
+Exact = func2(X, T)
+
+# Select training area
 a0 = 0
 length = 200
 t = t[a0:a0+length]
@@ -764,68 +829,69 @@ X2, T2 = np.meshgrid(x2,t2)
 Exact0 = Exact[a0:a0+length,:]
 X, T = np.meshgrid(x,t)
 
+# add Gaussian noise
 noise = 0.5
-#Exact = np.round(Exact,1)
 Exact = Exact0 + noise*np.std(Exact0)*np.random.randn(Exact0.shape[0], Exact0.shape[1])
 
 measurement = np.hstack((X.flatten()[:,None], T.flatten()[:,None],Exact.flatten()[:,None],Exact0.flatten()[:,None] )) 
 
-Nm = 1000
-m_sample = measurement[np.random.choice(measurement.shape[0],Nm),:]
+# -----------------------------
+# Create dataset for PINN training
+# -----------------------------
+Nm = 1000  # number of measurement points for the data loss term
+# Randomly sample Nm points from available measurements
+m_sample = measurement[np.random.choice(measurement.shape[0], Nm), :]
+# Flatten the meshgrid for PDE residual evaluation
+# X2, T2 should be the meshgrid corresponding to the PDE domain
 f = np.hstack((X2.flatten()[:, None], T2.flatten()[:, None]))
-Nf = 2*10**4
-f_sample = f[np.random.choice(f.shape[0],Nf),:]
-
+Nf = 2 * 10**4  # number of interior points for PDE residual loss
+# Randomly sample Nf points from the flattened PDE grid
+f_sample = f[np.random.choice(f.shape[0], Nf), :]
 print(f"load experience data Nm = {Nm} Nf = {Nf} noise = {noise} start_point= {a0}")
 
+
+# -----------------------------
+# Training Process
+# -----------------------------
 lambda_1_history = []
 layers = [2,50,100,100,100,5]
+# Initialize PINN model
 model = PINNInference(x_max=1,t_max=1,measurement=m_sample,f=f_sample ,Nf=Nf, layers=layers, device=device, a=1, b=1, c=1, d=1)
+# Pertrain
 model.train_inverse(niter=5001,Ir=0.003,lambda1=1,lambda2=0.1,lambda3=0,lambda4=1,plot_num=1000)
-# figure_compare(name='pertraining1')
-#model.train_inverse(niter=5001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-4,plot_num=1000)
-#model.callTrainSTRidge(lam = 1e-4,d_tol =10,maxit = 100,STR_iters = 10,normalize = 2)
-#print_pde(model.lambda_1, rhs_des)
-# figure_compare(name='pertraining4')
-#model.train_inverse(niter=5001,Ir=0.001,lambda1=1,lambda2=1,lambda3=1e-4,plot_num=1000,freezing=True)
+# Select terms
 model.callTrainSTRidge(lam = 1e-4,d_tol =25,maxit = 100,STR_iters = 10,normalize = 2)
+# Retrain
 model.train_inverse(niter=5001, Ir= 0.001, lambda1=1, lambda2=1, lambda3=0, lambda4=1.0, plot_num=1000,freezing=True)
-
 print_pde(model.lambda_1, rhs_des)
-# 转换为 NumPy 数组，便于后续操作
+
+# -----------------------------
+# Plot Results
+# -----------------------------
 lambda_1_history_np = np.array(lambda_list)
-
-# 绘制每个变量随迭代次数的变化曲线
 plt.figure(figsize=(10, 6))
-
-# 遍历每个变量
-for i in range(lambda_1_history_np.shape[1]):  # 遍历每列
-    if i == 8:  # 第2个变量（索引从0开始）
-        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='-', color='red')  # 红色虚线
+for i in range(lambda_1_history_np.shape[1]):  
+    if i == 8:  
+        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='-', color='red')  
         plt.axhline(y=1, color='red', linestyle=':')
-    elif i == 12:  # 第9个变量
-        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='-', color='blue')  # 蓝色点线
+    elif i == 12:  
+        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='-', color='blue')  
         plt.axhline(y=-0.5, color='blue', linestyle=':')
-    else:  # 其他变量
-        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='--')  # 黑色实线
+    else: 
+        plt.plot(lambda_1_history_np[:, i], label=rhs_des[i], linestyle='--')  
 
-# 添加标签和标题
 plt.xlabel('Iteration')
 plt.ylabel('Value of Variables')
 plt.title('u_tt=u_xx-0.1u_t')
 plt.legend()
 plt.grid(True)
 output_file = os.path.join(output_dir, 'iter.png')
-# 保存图片为高分辨率 PNG
 plt.savefig(output_file, dpi=300, bbox_inches='tight') 
 plt.show()
 plt.close()        
 
 
 figure_compare()
-#figure_compare2()
-
-# 组织数据
 data_dict = {
     "lambda_list": lambda_list,
     "lambda_list2": lambda_list2,
@@ -838,24 +904,20 @@ data_dict = {
     "loss_record_list": loss_record_list
 }
 
-# 保存数据
+# save data
 torch.save(data_dict, os.path.join(output_dir, "training_data.pth"))
 
 torch.save(model.dnn.state_dict(), os.path.join(output_dir, "net_state.pth"))
 
-# 创建图表
+
 loss_f_history_np = np.array(loss_f_list)
 fig, ax1 = plt.subplots(figsize=(10, 5))
-
-# 左轴绘制 loss_f (log-scale) 折线图
 ax1.plot(np.log(loss_f_history_np), 'b-', label='log(loss_f)')
 ax1.set_xlabel('Iterations')
 ax1.set_ylabel('log(loss_f)', color='b')
 ax1.tick_params(axis='y', labelcolor='b')
-ax1.set_yscale('linear')  # 这里用线性，因为 loss_f 已经是 log10 了
-
+ax1.set_yscale('linear')  
 output_file = os.path.join(output_dir, 'Loss_f over Iterations.png')
-# 保存图片为高分辨率 PNG
 plt.savefig(output_file, dpi=300, bbox_inches='tight') 
 plt.show()
 plt.close()
