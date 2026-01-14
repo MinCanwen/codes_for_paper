@@ -60,14 +60,6 @@ generalization in physics-informed learning.
 
 ---
 
-## Scope and Limitations
-
-- This repository focuses on **conceptual and numerical insights** rather than full-scale implementation.
-- The code demonstrates core ideas on benchmark problems and is being extended to more realistic physical
-  datasets in ongoing work.
-- Not all experimental details from ongoing research are included.
-
----
 
 ## Requirements
 
