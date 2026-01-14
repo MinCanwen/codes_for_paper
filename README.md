@@ -76,5 +76,3 @@ generalization in physics-informed learning.
 
 Example scripts for running benchmark experiments are provided:
 
-```bash
-python run_wave_equation.py
