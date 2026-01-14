@@ -4,9 +4,6 @@ This repository provides a simplified and self-contained implementation accompan
 improving the robustness and generalization of physics-informed neural networks (PINNs) for equation discovery
 from noisy and limited observations.
 
-The code is intended for demonstration and reproducibility purposes in the context of PhD and EPSRC DLA
-applications. It reflects the core ideas of the methodology without disclosing unpublished implementations
-or ongoing research details.
 
 ---
 
