@@ -1,14 +1,10 @@
 import os
 pid = os.getpid()
 print(f"Current process ID: {pid}")
-# 使用字符串格式化来构造文件夹路径
-# 获取 Python 文件所在的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 构建输出文件夹路径
 output_dir = os.path.join(current_dir, f"stage_2_{pid}")
 if not os.path.exists(output_dir):
-    os.makedirs(output_dir)  # 如果目录不存在，则创建
-
+    os.makedirs(output_dir) 
 print(output_dir)
 
 mat_file_path = './wave_initial1.mat'
@@ -31,7 +27,7 @@ def print_pde(w, rhs_description, ut = 'u_tt'):
     if isinstance(w, np.ndarray):
         lambda_1_value = w
     else:
-        lambda_1_value = w.detach().cpu().numpy()  # 获取当前 lambda_1 并转为 numpy 数组
+        lambda_1_value = w.detach().cpu().numpy()  # lambda_1 to numpy array
     #lambda_1_history.append(lambda_1_value)
     pde = ut + ' = '
     first = True
@@ -62,11 +58,11 @@ import scipy.io
 from typing import OrderedDict
 
 if torch.backends.mps.is_available():
-    device = torch.device('mps')  # macOS 上的 Apple Silicon (M1/M2) 使用 MPS
+    device = torch.device('mps')  # macOS , Apple Silicon (M1/M2) , MPS
 elif torch.cuda.is_available():
-    device = torch.device('cuda:0')  # Nvidia GPU 使用 CUDA
+    device = torch.device('cuda:0')  # Nvidia GPU , CUDA
 else:
-    device = torch.device('cpu')  # 默认使用 CPU
+    device = torch.device('cpu')  #  CPU
 
 print(f"Using device: {device}")
 
